@@ -1,7 +1,9 @@
-import { useMemo, type ReactNode } from "react";
 import type { Game } from "../../types";
 import { useTooManyGamesData } from "../../context/useTooManyGamesData";
 import { DayOfWeekCell } from "../DayOfWeekCell";
+
+type OrganisedScheduleSlots = Record<string, (Game | null | undefined)[]>;
+type OrganisedScheduleDays = Record<string, OrganisedScheduleSlots>;
 
 type EventProps = {
   event: Game;
@@ -19,8 +21,6 @@ const Event = ({ event, list }: EventProps) => {
   );
 };
 
-const sortableSlotId = (s: string) => parseInt(s.replaceAll("-", ""));
-
 export const EventGrid = () => {
   const { data } = useTooManyGamesData();
 
@@ -30,41 +30,70 @@ export const EventGrid = () => {
 
   const { events } = data;
 
-  const { maxGamesInASlotToday, gamesBySlot, unscheduled } = useMemo(() => {
-    const gamesBySlotMap = new Map<string, Game[]>();
-    const unscheduled: Game[] = [];
-    events.forEach((event) => {
+  const schedule: OrganisedScheduleDays = {};
+  const unscheduled: Game[] = [];
+
+  events
+    .toSorted((a, b) => (a.startSlot ?? "").localeCompare(b.startSlot ?? ""))
+    .forEach((event) => {
       const { startSlot, length } = event;
       if (!startSlot) {
         unscheduled.push(event);
         return;
       }
-      const [year, month, dayOfMonth, slotNumber] = startSlot.split("-");
-      const slotNo = parseInt(slotNumber);
-      for (let i = 0; i < length; i++) {
-        const id = `${year}-${month}-${dayOfMonth}-${slotNo + i}`;
-        if (gamesBySlotMap.has(id)) {
-          gamesBySlotMap.get(id)?.push(event);
-        } else {
-          gamesBySlotMap.set(id, [event]);
-        }
+      const [year, month, dayOfMonth, slotNumberStr] = startSlot.split("-");
+      const day = `${year}-${month}-${dayOfMonth}`;
+      const slotsToday = (schedule[day] ??= {});
+      const startSlotEvents = (slotsToday[startSlot] ??= []);
+      const undefinedIndex = startSlotEvents.findIndex((v) => v === undefined);
+      const targetIndex = undefinedIndex === -1 ? startSlotEvents.length : undefinedIndex;
+      startSlotEvents[targetIndex] = event;
+
+      const slotNo = parseInt(slotNumberStr);
+      if (length > 1) {
+        const secondSlot = `${day}-${slotNo + 1}`;
+        const secondSlotEvents = (slotsToday[secondSlot] ??= []);
+        secondSlotEvents[targetIndex] = null;
+      }
+      if (length > 2) {
+        const thirdSlot = `${day}-${slotNo + 2}`;
+        const thirdSlotEvents = (slotsToday[thirdSlot] ??= []);
+        thirdSlotEvents[targetIndex] = null;
       }
     });
 
-    const maxGamesInASlotTodayMap = new Map<string, number>();
-    Array.from(gamesBySlotMap.entries()).forEach(([slotId, events]) => {
-      const [year, month, dayOfMonth] = slotId.split("-");
-      const date = `${year}-${month}-${dayOfMonth}`;
-      const previous = maxGamesInASlotTodayMap.get(date) || 0;
-      if (events.length > previous) {
-        maxGamesInASlotTodayMap.set(date, events.length);
+  const maxGamesPerDay: Record<string, number> = {};
+  Object.entries(schedule).forEach(([date, slots]) => {
+    const max = Object.values(slots).reduce((max, current) => Math.max(max, current.length), 0);
+    maxGamesPerDay[date] = max;
+  });
+
+  const tbody = Object.entries(schedule)
+    .map(([date, slots]) => {
+      const max = maxGamesPerDay[date];
+      const ourSlots = [slots[`${date}-1`], slots[`${date}-2`], slots[`${date}-3`]];
+      const rows: React.ReactNode[] = [];
+      for (let row = 0; row < max; row++) {
+        const rowData: React.ReactNode[] = [];
+        if (row === 0) {
+          rowData.push(<DayOfWeekCell rowSpan={max} day={date} />);
+        }
+
+        for (let col = 0; col < 3; col++) {
+          const game = ourSlots[col][row];
+          if (game === undefined) {
+            rowData.push(<td />);
+          }
+          if (game) {
+            rowData.push(<Event event={game} />);
+          }
+        }
+
+        rows.push(<tr>{rowData}</tr>);
       }
-    });
-    const maxGamesInASlotToday = [...maxGamesInASlotTodayMap.entries()].toSorted(
-      ([a], [b]) => sortableSlotId(b) - sortableSlotId(a),
-    );
-    return { maxGamesInASlotToday, gamesBySlot: gamesBySlotMap, unscheduled };
-  }, [events]);
+      return rows;
+    })
+    .flat();
 
   return (
     <>
@@ -75,27 +104,7 @@ export const EventGrid = () => {
           <th>Afternoon</th>
           <th>Evening</th>
         </thead>
-        <tbody>
-          {maxGamesInASlotToday.map(([date, rowSpan]) =>
-            Array(rowSpan)
-              .fill(date)
-              .map((value, index) => {
-                const rowContents: ReactNode[] = [];
-                if (index === 0) {
-                  rowContents.push(<DayOfWeekCell day={value} rowSpan={rowSpan} />);
-                  for (let slot = 1; slot <= 3; slot++) {
-                    const slotId = `${value}-${slot}`;
-                    const game = gamesBySlot.get(slotId)?.[index];
-                    // Don't put it on the grid if it doesn't exist or if it is a colspan one from earlier today
-                    if (game && game.startSlot === slotId) {
-                      rowContents.push(<Event event={game} />);
-                    }
-                  }
-                }
-                return <tr key={`${date}r${index}`}>{rowContents}</tr>;
-              }),
-          )}
-        </tbody>
+        <tbody>{tbody}</tbody>
       </table>
       {unscheduled.length > 0 && (
         <>
