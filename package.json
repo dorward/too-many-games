@@ -1,0 +1,44 @@
+{
+  "name": "too-many-games",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "oxlint",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "exceljs": "^4.4.0",
+    "json-schema-to-ts": "^3.1.1",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "react-dropzone": "^17.0.0",
+    "react-icons": "^5.7.0",
+    "uuid": "^14.0.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^8.0.1",
+    "@rolldown/plugin-babel": "^0.2.3",
+    "@types/babel__core": "^7.20.5",
+    "@types/node": "^26.1.1",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.3",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "oxlint": "^1.71.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.1.1"
+  },
+  "overrides": {
+    "exceljs": {
+      "uuid": "^11.1.1"
+    }
+  },
+  "allowScripts": {
+    "fsevents@2.3.3": true
+  }
+}
