@@ -1,0 +1,22 @@
+.event {
+  margin: 3px;
+  padding: 3px;
+  border-radius: var(--border-radius);
+  border: solid 1px var(--color-accent-default);
+  background: var(--color-bg-surface);
+
+  header,
+  .row {
+    display: flex;
+    justify-content: space-between;
+    gap: 3px;
+    h2 {
+      font-size: 1.1rem;
+    }
+  }
+}
+
+.dayOfWeek {
+  border-radius: var(--border-radius);
+  border: solid 1px var(--color-accent-default);
+}

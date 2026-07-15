@@ -45,6 +45,8 @@
   --heading: system-ui, "Segoe UI", Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
+  --border-radius: 0.5rem;
+
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;
   color-scheme: light dark;
@@ -183,7 +185,7 @@ button {
   font-weight: 500;
   line-height: 1.25rem;
   border: 1px solid transparent;
-  border-radius: 0.5rem;
+  border-radius: var(--border-radius);
   cursor: pointer;
   transition:
     background-color 150ms ease,

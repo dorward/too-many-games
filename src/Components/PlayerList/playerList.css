@@ -1,0 +1,14 @@
+.playerList {
+  margin: 0;
+  padding: 0;
+  gap: 3px;
+  list-style: none;
+  display: flex;
+
+  li {
+    background-color: var(--color-bg-elevated);
+    font-size: 0.8rem;
+    padding: 3px 6px;
+    border-radius: var(--border-radius);
+  }
+}

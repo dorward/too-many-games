@@ -1,25 +1,11 @@
 import type { Game } from "../../types";
 import { useTooManyGamesData } from "../../context/useTooManyGamesData";
-import { DayOfWeekCell } from "../DayOfWeekCell";
+import { DayOfWeekCell } from "./DayOfWeekCell";
+import { Event } from "../Event/Event";
+import "./eventGrid.css";
 
 type OrganisedScheduleSlots = Record<string, (Game | null | undefined)[]>;
 type OrganisedScheduleDays = Record<string, OrganisedScheduleSlots>;
-
-type EventProps = {
-  event: Game;
-  list?: boolean;
-};
-
-const Event = ({ event, list }: EventProps) => {
-  if (list) {
-    return <div style={{ outline: "solid orange 1px" }}>{event.name}</div>;
-  }
-  return (
-    <td colSpan={event.length}>
-      <div style={{ outline: "solid orange 1px" }}>{event.name}</div>
-    </td>
-  );
-};
 
 export const EventGrid = () => {
   const { data } = useTooManyGamesData();
@@ -97,7 +83,11 @@ export const EventGrid = () => {
 
   return (
     <>
-      <table>
+      <table className="eventGrid">
+        <col />
+        <col />
+        <col />
+        <col />
         <thead>
           <th>Day</th>
           <th>Morning</th>

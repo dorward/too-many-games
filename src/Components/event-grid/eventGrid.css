@@ -1,0 +1,15 @@
+.eventGrid {
+  table-layout: fixed;
+  width: 100%;
+
+  tr {
+    background: transparent;
+  }
+
+  th:first-child {
+    width: 100px;
+  }
+  th:not(:first-child) {
+    width: auto;
+  }
+}
