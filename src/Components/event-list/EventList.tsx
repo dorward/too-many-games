@@ -18,16 +18,14 @@ export const EventList = () => {
         </tr>
       </thead>
       <tbody>
-        {data.events.map((event) => {
-          return (
-            <tr key={event.id}>
-              <td>{event.name}</td>
-              <td>{event.players.length}</td>
-              <td>{event.playerCount.max}</td>
-              <td>{describeSchedule(event)}</td>
-            </tr>
-          );
-        })}
+        {data.events.map((event) => (
+          <tr key={event.id}>
+            <td>{event.name}</td>
+            <td>{event.players.length}</td>
+            <td>{event.playerCount.max}</td>
+            <td>{describeSchedule(event)}</td>
+          </tr>
+        ))}
       </tbody>
     </table>
   );

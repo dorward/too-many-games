@@ -1,6 +1,7 @@
+// oxlint-disable typescript/no-unsafe-argument typescript/no-unsafe-member-access
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
-import { appDataSchema, type AppData } from "../types";
+import { type AppData, appDataSchema } from "../types";
 
 const ajv = new Ajv();
 addFormats(ajv);
@@ -16,8 +17,8 @@ const parseAppData = (input: string): AppData => {
   return {
     ...parsed,
     dates: {
-      start: new Date(parsed.dates.start),
       end: new Date(parsed.dates.end),
+      start: new Date(parsed.dates.start),
     },
   };
 };

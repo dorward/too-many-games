@@ -47,18 +47,19 @@
 
   --border-radius: 0.5rem;
 
-  font: 18px/145% var(--sans);
+  font: 16px/145% var(--sans);
   letter-spacing: 0.18px;
   color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
+  color: var(--color-text-default);
+
+  background: var(--color-bg-default);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
   @media (max-width: 1024px) {
-    font-size: 16px;
+    font-size: 14px;
   }
 }
 
@@ -116,7 +117,7 @@
   width: 1126px;
   max-width: 100%;
   margin: 0 auto;
-  border-inline: 1px solid var(--border);
+  border-inline: 1px solid var(--color-border-default);
   min-height: 100svh;
   display: flex;
   flex-direction: column;
@@ -131,7 +132,7 @@ h1,
 h2 {
   font-family: var(--heading);
   font-weight: 500;
-  color: var(--text-h);
+  color: var(--color-text-default);
 }
 
 h1 {
@@ -158,7 +159,20 @@ p {
 
 table {
   width: fit-content;
-  border-collapse: collapse;
+  margin: 1rem auto;
+  border-collapse: separate;
+  border: solid 1px var(--color-border-default);
+
+  th {
+    border-radius: var(--border-radius);
+    border: solid 1px var(--color-accent-default);
+    background: var(--color-bg-surface);
+  }
+}
+
+thead {
+  border: solid 1px var(--color-border-default);
+  background: var(--color-bg-surface);
 }
 
 th {
@@ -198,7 +212,7 @@ button {
 
 button.selected {
   background-color: var(--color-primary-active);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--shadow-sm);
 }
 
 button:hover {

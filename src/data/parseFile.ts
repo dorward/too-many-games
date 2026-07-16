@@ -2,11 +2,11 @@ import { parseWorkbook } from "./parseExcel/parseWorkbook";
 import { parseJson } from "./parseJson";
 
 const getExtension = (fileName: string) =>
-  (fileName.match(/\.([^.]+)$/)?.[1] ?? "").toLowerCase();
+  (/\.(?<ext>[^.]+)$/u.exec(fileName)?.groups?.ext ?? "").toLowerCase();
 
 export const parseFile = (files: File[]) => {
   if (files.length !== 1) {
-    throw new Error("Expected 1 file but received " + files.length);
+    throw new Error(`Expected 1 file but received ${files.length}`);
   }
   const [file] = files;
   const type = file.type.toLowerCase();

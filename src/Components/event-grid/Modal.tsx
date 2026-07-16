@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from "react";
+import { type ReactNode, useEffect, useRef } from "react";
 
 interface ModalProps {
   isOpen: boolean;
@@ -12,7 +12,9 @@ export const Modal = ({ isOpen, onClose, children, title }: ModalProps) => {
 
   useEffect(() => {
     const dialog = dialogRef.current;
-    if (!dialog) return;
+    if (!dialog) {
+      return;
+    }
 
     if (isOpen && !dialog.open) {
       dialog.showModal();
@@ -23,16 +25,22 @@ export const Modal = ({ isOpen, onClose, children, title }: ModalProps) => {
 
   useEffect(() => {
     const dialog = dialogRef.current;
-    if (!dialog) return;
+    if (!dialog) {
+      return () => {};
+    }
 
-    const handleClose = () => onClose();
+    const handleClose = () => {
+      onClose();
+    };
     dialog.addEventListener("close", handleClose);
-    return () => dialog.removeEventListener("close", handleClose);
+    return () => {
+      dialog.removeEventListener("close", handleClose);
+    };
   }, [onClose]);
 
   return (
     <dialog ref={dialogRef} className="modal">
-      {title && <h2>{title}</h2>}
+      {title !== undefined && <h2>{title}</h2>}
       {children}
       <button onClick={onClose} aria-label="Close">
         ×

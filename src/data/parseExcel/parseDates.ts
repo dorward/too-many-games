@@ -7,10 +7,12 @@ export const parseDates = (workbook: Workbook): Dates => {
     throw new Error("Could not find 'Welcome & Information' sheet");
   }
   const start = sheet.getCell("B4").value;
-  if (!(start instanceof Date))
-    throw new Error(`Expected to find a Date in cell B4 but found ${start}`);
+  if (!(start instanceof Date)) {
+    throw new Error(`Expected to find a Date in cell B4 but found ${JSON.stringify(start)}`);
+  }
   const end = sheet.getCell("B5").value;
-  if (!(end instanceof Date))
-    throw new Error(`Expected to find a Date in cell B5 but found ${end}`);
-  return { start, end };
+  if (!(end instanceof Date)) {
+    throw new Error(`Expected to find a Date in cell B5 but found ${JSON.stringify(end)}`);
+  }
+  return { end, start };
 };

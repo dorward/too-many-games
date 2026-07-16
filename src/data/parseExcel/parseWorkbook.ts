@@ -15,6 +15,6 @@ export const parseWorkbook = async (file: File) => {
   const events = parseEvents(workbook, attendees, locations);
   const dates = parseDates(workbook);
   console.log({ dates });
-  const appData: AppData = { attendees, locations, events, dates };
+  const appData: AppData = { attendees, dates, events, locations };
   return appData;
 };

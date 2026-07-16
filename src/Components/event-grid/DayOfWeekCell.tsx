@@ -1,9 +1,9 @@
 import { slotData } from "../../util/slotData";
 
-type DayOfWeekCellProps = {
+interface DayOfWeekCellProps {
   day: string;
   rowSpan?: number;
-};
+}
 
 export const DayOfWeekCell = ({ day, rowSpan }: DayOfWeekCellProps) => {
   const { dayOfWeek } = slotData(day);

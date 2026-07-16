@@ -1,8 +1,40 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["react", "typescript", "oxc"],
+  "jsPlugins": [{ "name": "react-doctor", "specifier": "oxlint-plugin-react-doctor" }],
   "rules": {
     "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
+    "react/only-export-components": ["warn", { "allowConstantExport": true }],
+    "react-doctor/no-fetch-in-effect": "warn",
+    "react-doctor/no-derived-state-effect": "warn",
+    "react-doctor/no-chain-state-updates": "warn",
+    "react-doctor/no-event-handler": "warn",
+    "react-doctor/no-adjust-state-on-prop-change": "warn",
+    "react-doctor/no-reset-all-state-on-prop-change": "warn",
+    "react-doctor/no-pass-live-state-to-parent": "warn",
+    "react-doctor/no-pass-data-to-parent": "warn",
+    "react-doctor/no-initialize-state": "warn",
+    "react/react-in-jsx-scope": "off",
+    "react/jsx-max-depth": ["warn", { "max": 4 }],
+    "eslint/no-ternary": "off",
+    "sort-imports": "off",
+    "no-magic-numbers": ["warn", { "ignore": [-1, 0, 1, 2, 3] }],
+    "typescript/prefer-readonly-parameter-types": "off",
+    "max-statements": ["warn", { "max": 20 }],
+    "id-length": ["off"],
+    "max-params": ["warn", { "max": 5 }]
+  },
+  "options": {
+    "typeAware": true,
+    "typeCheck": true,
+    "maxWarnings": 100
+  },
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "pedantic": "warn",
+    "perf": "warn",
+    "style": "warn",
+    "restriction": "off"
   }
 }

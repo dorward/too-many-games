@@ -15,8 +15,3 @@
     }
   }
 }
-
-.dayOfWeek {
-  border-radius: var(--border-radius);
-  border: solid 1px var(--color-accent-default);
-}

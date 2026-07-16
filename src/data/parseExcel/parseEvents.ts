@@ -60,34 +60,37 @@ export const parseEvents = (
 
   for (let row = START_ROW; row < SANITY_BRAKE_ROWS; row++) {
     const name = getPlainTextFromCell(sheet, COLUMN_NAME, row);
-    if (!name) break;
+    if (!name) {
+      break;
+    }
     const notes = getPlainTextFromCell(sheet, COLUMN_NOTES, row);
     const length = cellAt(sheet, COLUMN_LENGTH, row).value;
-    if (typeof length !== "number")
+    if (typeof length !== "number") {
       throw new Error(
         `Expected a number in cell ${COLUMN_LENGTH}${row} in worksheet Game Scheduling`,
       );
+    }
     const facilitator = getAttendee(attendees, sheet, COLUMN_FACILITATOR, row);
     const preferredSpace = (getPlainTextFromCell(sheet, COLUMN_SPACE, row) ?? "")
       .split(",")
       .map((space) => locations.find((location) => location.name === space.trim())?.id)
-      .filter((value) => typeof value === "string" && value.length > 0);
+      .filter((value): value is string => typeof value === "string" && value.length > 0);
     const playerCount: Game["playerCount"] = {
-      min: getNumberFromCell(sheet, COLUMN_P_MIN, row),
       desirable: getNumberFromCell(sheet, COLUMN_P_DES, row),
       max: getNumberFromCell(sheet, COLUMN_P_MAX, row),
+      min: getNumberFromCell(sheet, COLUMN_P_MIN, row),
     };
     const [players, waitList] = getPlayers(attendees, sheet, row, playerCount.max);
     games.push({
+      facilitator,
+      id: uuid(),
+      length,
       name,
       notes,
-      length,
-      facilitator,
-      preferredSpace,
       playerCount,
       players,
+      preferredSpace,
       waitList,
-      id: uuid(),
     });
   }
 

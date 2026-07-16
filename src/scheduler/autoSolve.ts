@@ -1,11 +1,18 @@
+// oxlint-disable max-statements oxc/no-map-spread
 import type { AppData, Game } from "../types";
 import { generateSlotIds } from "./generateSlotIds";
 
-type Placement = { startIdx: number; locationId: string };
+const DEFAULT_TIME_LIMIT = 1000;
 
+interface Placement {
+  startIdx: number;
+  locationId: string;
+}
+
+// oxlint-disable-next-line max-lines-per-function
 export const autoSolve = (data: AppData, options: { timeLimitMs?: number } = {}): Game[] => {
   const { slots } = generateSlotIds(data.dates);
-  const locations = data.locations;
+  const { locations } = data;
   const games = data.events;
 
   const autoLocationIds = new Set(locations.filter((l) => l.autoAllocation).map((l) => l.id));
@@ -17,15 +24,19 @@ export const autoSolve = (data: AppData, options: { timeLimitMs?: number } = {})
     const fallbackLocs = allLocationIds.filter(
       (id) => autoLocationIds.has(id) && !preferredLocs.includes(id),
     );
-    return { game, participants, preferredLocs, fallbackLocs, length: game.length };
+    return { fallbackLocs, game, length: game.length, participants, preferredLocs };
   });
 
   // Hardest games first: long games, then most players, then difficult locations.
   items.sort((a, b) => {
     const lengthDiff = b.length - a.length;
-    if (lengthDiff !== 0) return lengthDiff;
+    if (lengthDiff !== 0) {
+      return lengthDiff;
+    }
     const playerDiff = b.participants.size - a.participants.size;
-    if (playerDiff !== 0) return playerDiff;
+    if (playerDiff !== 0) {
+      return playerDiff;
+    }
     return a.preferredLocs.length + a.fallbackLocs.length - b.preferredLocs.length;
   });
 
@@ -37,23 +48,31 @@ export const autoSolve = (data: AppData, options: { timeLimitMs?: number } = {})
   let bestAssignments = new Map<string, { startSlot: string; location: string }>();
 
   const startTime = Date.now();
-  const timeLimit = options.timeLimitMs ?? 1000;
+  const timeLimit = options.timeLimitMs ?? DEFAULT_TIME_LIMIT;
 
   const canPlace = (
     item: (typeof items)[number],
     startIdx: number,
     locationId: string,
   ): boolean => {
-    if (startIdx + item.length > slots.length) return false;
-    if ((startIdx % 3) + item.length > 3) return false;
+    if (startIdx + item.length > slots.length) {
+      return false;
+    }
+    if ((startIdx % 3) + item.length > 3) {
+      return false;
+    }
 
     for (let offset = 0; offset < item.length; offset++) {
       const slot = slots[startIdx + offset];
-      if (slotLocations.get(slot)?.has(locationId)) return false;
+      if (slotLocations.get(slot)?.has(locationId)) {
+        return false;
+      }
       const occupiedPlayers = slotPlayers.get(slot);
       if (occupiedPlayers) {
         for (const player of item.participants) {
-          if (occupiedPlayers.has(player)) return false;
+          if (occupiedPlayers.has(player)) {
+            return false;
+          }
         }
       }
     }
@@ -63,35 +82,42 @@ export const autoSolve = (data: AppData, options: { timeLimitMs?: number } = {})
   const getPlacements = (item: (typeof items)[number]): Placement[] => {
     const preferred: Placement[] = [];
     const fallback: Placement[] = [];
-    for (let startIdx = 0; startIdx < slots.length; startIdx++) {
-      if (startIdx + item.length > slots.length) continue;
+    slots.forEach((_slot, startIdx) => {
+      if (startIdx + item.length > slots.length) {
+        return;
+      }
       for (const locationId of item.preferredLocs) {
         if (canPlace(item, startIdx, locationId)) {
-          preferred.push({ startIdx, locationId });
+          preferred.push({ locationId, startIdx });
         }
       }
       for (const locationId of item.fallbackLocs) {
         if (canPlace(item, startIdx, locationId)) {
-          fallback.push({ startIdx, locationId });
+          fallback.push({ locationId, startIdx });
         }
       }
-    }
+    });
+
     return [...preferred, ...fallback];
   };
 
   const place = (item: (typeof items)[number], startIdx: number, locationId: string) => {
     for (let offset = 0; offset < item.length; offset++) {
       const slot = slots[startIdx + offset];
-      if (!slotLocations.has(slot)) slotLocations.set(slot, new Set());
+      if (!slotLocations.has(slot)) {
+        slotLocations.set(slot, new Set());
+      }
       slotLocations.get(slot)!.add(locationId);
-      if (!slotPlayers.has(slot)) slotPlayers.set(slot, new Set());
+      if (!slotPlayers.has(slot)) {
+        slotPlayers.set(slot, new Set());
+      }
       for (const player of item.participants) {
         slotPlayers.get(slot)!.add(player);
       }
     }
     assignments.set(item.game.id, {
-      startSlot: slots[startIdx],
       location: locationId,
+      startSlot: slots[startIdx],
     });
   };
 
@@ -115,12 +141,18 @@ export const autoSolve = (data: AppData, options: { timeLimitMs?: number } = {})
   };
 
   const search = (index: number, scheduledCount: number) => {
-    if (Date.now() - startTime > timeLimit) return;
+    if (Date.now() - startTime > timeLimit) {
+      return;
+    }
     recordBest(scheduledCount);
 
     const remaining = items.length - index;
-    if (scheduledCount + remaining <= bestCount) return;
-    if (index === items.length) return;
+    if (scheduledCount + remaining <= bestCount) {
+      return;
+    }
+    if (index === items.length) {
+      return;
+    }
 
     const item = items[index];
     const placements = getPlacements(item);
@@ -139,11 +171,13 @@ export const autoSolve = (data: AppData, options: { timeLimitMs?: number } = {})
 
   return games.map((game) => {
     const assignment = bestAssignments.get(game.id);
-    if (!assignment) return game;
+    if (!assignment) {
+      return game;
+    }
     return {
       ...game,
-      startSlot: assignment.startSlot,
       location: assignment.location,
+      startSlot: assignment.startSlot,
     };
   });
 };

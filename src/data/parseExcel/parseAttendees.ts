@@ -17,8 +17,8 @@ export const parseAttendees = (workbook: Workbook) => {
 
   for (let row = START_ROW; row < SANITY_BRAKE; row++) {
     const name = getPlainTextFromCell(sheet, COLUMN, row);
-    if (!name) break;
-    attendees.push({ name, id: uuid() });
+    if (!name) {break;}
+    attendees.push({ id: uuid(), name });
   }
 
   return attendees;

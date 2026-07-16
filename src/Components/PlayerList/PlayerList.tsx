@@ -2,9 +2,9 @@ import { useContext, useMemo } from "react";
 import { TooManyGamesContext } from "../../context/TooManyGamesContext";
 import "./playerList.css";
 
-type PlayerListProps = {
+interface PlayerListProps {
   playerIds: string[];
-};
+}
 
 export const PlayerList = ({ playerIds }: PlayerListProps) => {
   const context = useContext(TooManyGamesContext);

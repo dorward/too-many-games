@@ -13,3 +13,15 @@
     width: auto;
   }
 }
+
+.dayOfWeek {
+  border-radius: var(--border-radius);
+  border: solid 1px var(--color-accent-default);
+  background: var(--color-bg-surface);
+}
+
+.unscheduled {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}

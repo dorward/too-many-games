@@ -1,7 +1,9 @@
 import type { Game } from "../types";
 
 export const describeSchedule = (event: Game): string => {
-  if (!event.startSlot) return "Unscheduled";
+  if (event.startSlot === undefined) {
+    return "Unscheduled";
+  }
   const [year, month, dayOfMonth, slotNumber] = event.startSlot.split("-");
 
   const date = new Date(`${year}-${month}-${dayOfMonth}T00:00:00`);
@@ -12,7 +14,9 @@ export const describeSchedule = (event: Game): string => {
       return "All Day";
     }
     if (event.length === 2) {
-      if (slotNumber === "1") return "Morning & Afternoon";
+      if (slotNumber === "1") {
+        return "Morning & Afternoon";
+      }
       return "Afternoon & Evening";
     }
     switch (slotNumber) {

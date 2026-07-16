@@ -1,5 +1,7 @@
 import type { Dates, SlotId } from "../types";
 
+const LENGTH_OF_ISO_DATE = 10;
+
 const pad = (n: number) => n.toString().padStart(2, "0");
 
 const startOfDay = (date: Date) => {
@@ -34,7 +36,7 @@ export const generateSlotIds = (dates: Dates) => {
 
   const grouped = new Map<string, string[]>();
   for (const slot of slots) {
-    const day = slot.slice(0, 10);
+    const day = slot.slice(0, LENGTH_OF_ISO_DATE);
     const existing = grouped.get(day);
     if (existing) {
       existing.push(slot);
@@ -45,5 +47,5 @@ export const generateSlotIds = (dates: Dates) => {
 
   const days = Array.from(grouped.entries());
 
-  return { slots, days };
+  return { days, slots };
 };

@@ -18,11 +18,11 @@ export const parseLocations = (workbook: Workbook) => {
 
   for (let row = START_ROW; row < SANITY_BRAKE; row++) {
     const name = cellAt(sheet, COLUMN_NAME, row).text;
-    if (!name) break;
+    if (!name) {break;}
     const autoAllocation = cellAt(sheet, COLUMN_AUTO, row).value;
     if (typeof autoAllocation !== "boolean")
-      throw new Error(`Expected a boolean in cell ${COLUMN_AUTO}${row} in worksheet Locations`);
-    attendees.push({ name, autoAllocation, id: uuid() });
+      {throw new Error(`Expected a boolean in cell ${COLUMN_AUTO}${row} in worksheet Locations`);}
+    attendees.push({ autoAllocation, id: uuid(), name });
   }
 
   return attendees;

@@ -3,7 +3,7 @@ import type { CellHyperlinkValue, CellValue, RichText } from "exceljs";
 type Input = CellValue | RichText[] | RichText;
 
 const isHyperlink = (input: Input): input is CellHyperlinkValue =>
-  Boolean(input && typeof input === "object" && "text" in input && "hyperlink" in input);
+  input !== null && typeof input === "object" && "text" in input && "hyperlink" in input;
 
 /**
  * Extracts plain text from an ExcelJS cell value, handling different cell formats.
@@ -41,8 +41,7 @@ export const getPlainText = (input: Input): string => {
     return getPlainText(input.richText);
   } else if (isHyperlink(input)) {
     return input.hyperlink;
-  } else {
-    console.error(input);
-    throw new Error(`Unexpected value`);
   }
+  console.error(input);
+  throw new Error(`Unexpected value`);
 };

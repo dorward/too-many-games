@@ -1,3 +1,5 @@
+import { ALPHA_LIMIT, CHAR_CODE_A } from "../../../consts";
+
 /**
  * Generates an ExcelJS cell ID based on the given row and column.
  *
@@ -13,13 +15,14 @@
  * getCellID(1, 0); // "A1"
  * getCellID(3, 2); // "C3"
  */
+
 export const getCellID = (row: number, colCode: number): string => {
   let index = colCode;
   let columnName = "";
 
   do {
-    columnName = String.fromCharCode(65 + (index % 26)) + columnName;
-    index = Math.floor(index / 26) - 1;
+    columnName = String.fromCharCode(CHAR_CODE_A + (index % ALPHA_LIMIT)) + columnName;
+    index = Math.floor(index / ALPHA_LIMIT) - 1;
   } while (index >= 0);
 
   return `${columnName}${row}`;
