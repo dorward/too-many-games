@@ -38,7 +38,7 @@ const EventComponent = ({ event }: EventProps) => {
         <PlayerList playerIds={[event.facilitator, ...event.players]} />
       </div>
       <Modal isOpen={isOpen} title={event.name} onClose={closeModal}>
-        {isOpen && <EventEditor event={event} />}
+        {isOpen && <EventEditor event={event} closeEditor={closeModal} />}
       </Modal>
     </div>
   );

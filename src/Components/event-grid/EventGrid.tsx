@@ -89,7 +89,7 @@ export const EventGrid = () => {
           <ul className="unscheduled">
             {unscheduled.map((event) => (
               <li key={event.id}>
-                <Event event={event} list />
+                <Event key={event.id} event={event} list />
               </li>
             ))}
           </ul>

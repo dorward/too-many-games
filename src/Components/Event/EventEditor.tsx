@@ -4,14 +4,15 @@ import type { Game } from "../../types";
 import { FaCheck } from "react-icons/fa";
 import { SlotEditor } from "./SlotEditor";
 import { LocationEditor } from "./LocationEditor";
+
 interface EventEditorProps {
   event: Game;
+  closeEditor: () => void;
 }
 
-// TODO: Use local values and then only do it on save
 // TODO: Add local conflict warnings
 
-export const EventEditor = ({ event }: EventEditorProps) => {
+export const EventEditor = ({ event, closeEditor }: EventEditorProps) => {
   const context = useContext(TooManyGamesContext);
   const [draftSlot, setDraftSlot] = useState<string | undefined>(event.startSlot);
   const [draftLocation, setDraftLocation] = useState<string | undefined>(event.location);
@@ -21,7 +22,8 @@ export const EventEditor = ({ event }: EventEditorProps) => {
       throw new Error("Context missing");
     }
     context.updateEvent(event.id, { location: draftLocation, startSlot: draftSlot });
-  }, [event.id, context, draftSlot, draftLocation]);
+    closeEditor();
+  }, [event.id, context, draftSlot, draftLocation, closeEditor]);
 
   if (!context?.data) {
     return <div>loading</div>;
