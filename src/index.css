@@ -46,6 +46,7 @@
   --mono: ui-monospace, Consolas, monospace;
 
   --border-radius: 0.5rem;
+  --default-padding: 0.5rem;
 
   font: 16px/145% var(--sans);
   letter-spacing: 0.18px;
@@ -179,10 +180,11 @@ th {
   text-align: left;
 }
 
-th,
+th {
+  padding: var(--default-padding);
+}
 td {
-  padding-left: 6px;
-  padding-right: 6px;
+  padding: 0;
 }
 
 tr:nth-child(even) {

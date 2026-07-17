@@ -9,7 +9,7 @@
   .button-group {
     display: flex;
     align-items: center;
-    gap: 3px;
+    gap: var(--default-padding);
   }
   button {
     height: 40px;

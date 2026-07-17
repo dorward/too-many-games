@@ -1,6 +1,5 @@
 .event {
-  margin: 3px;
-  padding: 3px;
+  padding: var(--default-padding);
   border-radius: var(--border-radius);
   border: solid 1px var(--color-accent-default);
   background: var(--color-bg-surface);
@@ -9,7 +8,7 @@
   .row {
     display: flex;
     justify-content: space-between;
-    gap: 3px;
+    gap: var(--default-padding);
     h2 {
       font-size: 1.1rem;
     }
