@@ -1,34 +1,27 @@
-import { useContext, useMemo } from "react";
+import { useCallback, useContext, useState } from "react";
 import { TooManyGamesContext } from "../../context/TooManyGamesContext";
 import type { Game } from "../../types";
-import { Location } from "../Location/Location";
-import { generateSlotIds } from "../../scheduler/generateSlotIds";
-import { slotData } from "../../util/slotData";
-
-const SLOTS_PER_DAY = 3;
-const JSON_FORMAT_PADDING = 2;
-
+import { FaCheck } from "react-icons/fa";
+import { SlotEditor } from "./SlotEditor";
+import { LocationEditor } from "./LocationEditor";
 interface EventEditorProps {
   event: Game;
 }
+
+// TODO: Use local values and then only do it on save
+// TODO: Add local conflict warnings
+
 export const EventEditor = ({ event }: EventEditorProps) => {
   const context = useContext(TooManyGamesContext);
+  const [draftSlot, setDraftSlot] = useState<string | undefined>(event.startSlot);
+  const [draftLocation, setDraftLocation] = useState<string | undefined>(event.location);
 
-  const options = useMemo(() => {
-    if (!context?.data) {
-      return null;
+  const onSave = useCallback(() => {
+    if (!context) {
+      throw new Error("Context missing");
     }
-    const { slots } = generateSlotIds(context.data.dates);
-    return slots.map((slotId) => {
-      const { dayOfWeek, time, slotNumberStr } = slotData(slotId);
-      const slotNo = parseInt(slotNumberStr, 10);
-      return {
-        disabled: event.length + slotNo >= SLOTS_PER_DAY,
-        label: `${dayOfWeek} ${time}`,
-        value: slotId,
-      };
-    });
-  }, [context?.data, event.length]);
+    context.updateEvent(event.id, { location: draftLocation, startSlot: draftSlot });
+  }, [event.id, context, draftSlot, draftLocation]);
 
   if (!context?.data) {
     return <div>loading</div>;
@@ -36,21 +29,17 @@ export const EventEditor = ({ event }: EventEditorProps) => {
 
   return (
     <div className="eventEditor">
-      <p>Slot: {event.startSlot}</p>
-
-      <label>
-        Slot{" "}
-        <select value={event.startSlot}>
-          {options?.map(({ value, label }) => (
-            <option key={value} value={value} label={label} />
-          ))}
-        </select>
-      </label>
-
-      <p>
-        Location: <Location event={event} />
-      </p>
-      <p>Slots: {JSON.stringify(options, null, JSON_FORMAT_PADDING)}</p>
+      <SlotEditor dates={context.data.dates} event={event} setSlot={setDraftSlot} />
+      <LocationEditor
+        locations={context.data.locations}
+        event={event}
+        setLocation={setDraftLocation}
+      />
+      <button aria-label="Save" title="Save" onClick={onSave}>
+        <FaCheck />
+      </button>
     </div>
   );
 };
+
+//

@@ -19,6 +19,7 @@ const addDays = (date: Date, days: number) => {
 const formatDate = (date: Date) =>
   `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 
+// TODO: Memoise this
 export const generateSlotIds = (dates: Dates) => {
   const slots: SlotId[] = [];
   const start = startOfDay(dates.start);
