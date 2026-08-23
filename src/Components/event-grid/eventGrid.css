@@ -22,6 +22,13 @@ td {
   border-radius: var(--border-radius);
   border: solid 1px var(--color-accent-default);
   background: var(--color-bg-surface);
+  font-size: 130%;
+  font-weight: bold;
+  text-align: center;
+
+  &.even {
+    background: var(--color-bg-elevated);
+  }
 }
 
 .unscheduled {
