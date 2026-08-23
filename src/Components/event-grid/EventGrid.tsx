@@ -1,3 +1,4 @@
+// oxlint-disable no-multi-assign
 import type { Event, OrganisedScheduleDays } from "../../types";
 import { useMemo } from "react";
 import { useTooManyGamesData } from "../../context/useTooManyGamesData";

@@ -19,6 +19,45 @@ const COLUMN_P_MIN = "F";
 const COLUMN_P_DES = "G";
 const COLUMN_P_MAX = "H";
 const COLUMN_SIGNUP_START = "I";
+const SHEET_NAME = "Game Scheduling";
+
+const getEventsSheet = (workbook: Workbook) => {
+  const sheet = workbook.getWorksheet(SHEET_NAME);
+  if (!sheet) {
+    throw new Error(`Could not find '${SHEET_NAME}' sheet`);
+  }
+  return sheet;
+};
+
+const getEventLength = (sheet: Worksheet, row: number) => {
+  const length = cellAt(sheet, COLUMN_LENGTH, row).value;
+  if (typeof length !== "number") {
+    throw new Error(`Expected a number in cell ${COLUMN_LENGTH}${row} in worksheet ${SHEET_NAME}`);
+  }
+  return length;
+};
+
+const getEventFacilitator = (attendees: Attendee[], sheet: Worksheet, row: number) => {
+  const facilitator = getAttendee(attendees, sheet, COLUMN_FACILITATOR, row);
+  if (facilitator === null) {
+    throw new Error(
+      `Expected an attendee in cell ${COLUMN_FACILITATOR}${row} in worksheet ${SHEET_NAME}`,
+    );
+  }
+  return facilitator;
+};
+
+const getPreferredSpace = (locations: Location[], sheet: Worksheet, row: number) =>
+  (getPlainTextFromCell(sheet, COLUMN_SPACE, row) ?? "")
+    .split(",")
+    .map((space) => locations.find((location) => location.name === space.trim())?.id)
+    .filter((value): value is string => typeof value === "string" && value.length > 0);
+
+const getPlayerCount = (sheet: Worksheet, row: number): Event["playerCount"] => ({
+  desirable: getNumberFromCell(sheet, COLUMN_P_DES, row),
+  max: getNumberFromCell(sheet, COLUMN_P_MAX, row),
+  min: getNumberFromCell(sheet, COLUMN_P_MIN, row),
+});
 
 const getPlayers = (
   attendees: Attendee[],
@@ -49,57 +88,52 @@ const getPlayers = (
   return [players, waitList];
 };
 
+const parseEvent = (
+  sheet: Worksheet,
+  row: number,
+  attendees: Attendee[],
+  locations: Location[],
+): Event | null => {
+  const name = getPlainTextFromCell(sheet, COLUMN_NAME, row);
+  if (!name) {
+    return null;
+  }
+
+  const facilitator = getEventFacilitator(attendees, sheet, row);
+  const length = getEventLength(sheet, row);
+  const notes = getPlainTextFromCell(sheet, COLUMN_NOTES, row);
+  const playerCount = getPlayerCount(sheet, row);
+  const preferredSpace = getPreferredSpace(locations, sheet, row);
+  const [players, waitList] = getPlayers(attendees, sheet, row, playerCount.max);
+
+  return {
+    facilitator,
+    id: uuid(),
+    length,
+    name,
+    notes,
+    playerCount,
+    players,
+    preferredSpace,
+    waitList,
+  };
+};
+
 export const parseEvents = (
   workbook: Workbook,
   attendees: Attendee[],
   locations: Location[],
 ) => {
-  const sheet = workbook.getWorksheet("Game Scheduling");
-  if (!sheet) {
-    throw new Error("Could not find 'Game Scheduling' sheet");
-  }
+  const sheet = getEventsSheet(workbook);
 
   const events: Event[] = [];
 
   for (let row = START_ROW; row < SANITY_BRAKE_ROWS; row++) {
-    const name = getPlainTextFromCell(sheet, COLUMN_NAME, row);
-    if (!name) {
+    const event = parseEvent(sheet, row, attendees, locations);
+    if (event === null) {
       break;
     }
-    const notes = getPlainTextFromCell(sheet, COLUMN_NOTES, row);
-    const length = cellAt(sheet, COLUMN_LENGTH, row).value;
-    if (typeof length !== "number") {
-      throw new Error(
-        `Expected a number in cell ${COLUMN_LENGTH}${row} in worksheet Game Scheduling`,
-      );
-    }
-    const facilitator = getAttendee(attendees, sheet, COLUMN_FACILITATOR, row);
-    if (facilitator === null) {
-      throw new Error(
-        `Expected an attendee in cell ${COLUMN_FACILITATOR}${row} in worksheet Game Scheduling`,
-      );
-    }
-    const preferredSpace = (getPlainTextFromCell(sheet, COLUMN_SPACE, row) ?? "")
-      .split(",")
-      .map((space) => locations.find((location) => location.name === space.trim())?.id)
-      .filter((value): value is string => typeof value === "string" && value.length > 0);
-    const playerCount: Event["playerCount"] = {
-      desirable: getNumberFromCell(sheet, COLUMN_P_DES, row),
-      max: getNumberFromCell(sheet, COLUMN_P_MAX, row),
-      min: getNumberFromCell(sheet, COLUMN_P_MIN, row),
-    };
-    const [players, waitList] = getPlayers(attendees, sheet, row, playerCount.max);
-    events.push({
-      facilitator,
-      id: uuid(),
-      length,
-      name,
-      notes,
-      playerCount,
-      players,
-      preferredSpace,
-      waitList,
-    });
+    events.push(event);
   }
 
   return events;
