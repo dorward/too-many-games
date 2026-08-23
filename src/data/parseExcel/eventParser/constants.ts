@@ -1,0 +1,13 @@
+export const START_ROW = 3;
+export const SANITY_BRAKE_ROWS = 150;
+export const SANITY_BRAKE_COLS = 40;
+export const COLUMN_NAME = "A";
+export const COLUMN_NOTES = "B";
+export const COLUMN_LENGTH = "C";
+export const COLUMN_FACILITATOR = "D";
+export const COLUMN_SPACE = "E";
+export const COLUMN_P_MIN = "F";
+export const COLUMN_P_DES = "G";
+export const COLUMN_P_MAX = "H";
+export const COLUMN_SIGNUP_START = "I";
+export const SHEET_NAME = "Game Scheduling";
