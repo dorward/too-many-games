@@ -16,7 +16,6 @@ export const SlotEditor = ({ dates, event, setSlot }: SlotEditorProps) => {
     return slots.map((slotId) => {
       const { dayOfWeek, time, slotNumberStr } = slotData(slotId);
       const slotNo = parseInt(slotNumberStr, 10);
-      console.log({ disabled: event.length + slotNo >= SLOTS_PER_DAY, slotNo });
       return {
         disabled: event.length + slotNo > SLOTS_PER_DAY + 1,
         label: `${dayOfWeek} ${time}`,

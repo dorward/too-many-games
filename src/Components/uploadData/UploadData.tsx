@@ -15,7 +15,6 @@ export const UploadData = () => {
     onDrop: (acceptedFiles) => {
       const doWork = async () => {
         const appData = await parseFile(acceptedFiles);
-        console.log("Upload Data got ", appData);
         setData(appData);
       };
       // TODO: Handle errors?
