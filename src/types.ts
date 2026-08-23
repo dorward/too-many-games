@@ -134,6 +134,7 @@ export interface EventWithScheduleHelpers {
   candidateStartIndexes: number[];
   fallbackLocs: LocationChoice[];
   event: Event;
+  isRequired: boolean;
   length: number;
   participantCount: number;
   participantMask: bigint;

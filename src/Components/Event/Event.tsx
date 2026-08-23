@@ -1,4 +1,5 @@
 import type { Event } from "../../types";
+import type { SchedulingError } from "../../scheduler/getSchedulingErrors";
 import { useCallback, useState } from "react";
 import { Modal } from "../event-grid/Modal";
 import { FaRegEdit } from "react-icons/fa";
@@ -10,9 +11,10 @@ import "./event.css";
 
 interface EventProps {
   event: Event;
+  schedulingError?: SchedulingError;
 }
 
-export const EventComponent = ({ event }: EventProps) => {
+export const EventComponent = ({ event, schedulingError }: EventProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = useCallback(() => {
     setIsOpen(false);
@@ -24,7 +26,7 @@ export const EventComponent = ({ event }: EventProps) => {
   const openMsg = `Open ${event.name}`;
 
   return (
-    <div className="event">
+    <div className={schedulingError?.hasError ? "event error" : "event"}>
       <header>
         <h2>{event.name}</h2>
         <button onClick={openModal} aria-label={openMsg} title={openMsg}>
@@ -34,9 +36,12 @@ export const EventComponent = ({ event }: EventProps) => {
       <div>
         <div className="row">
           <ScheduledTime event={event} />
-          <Location event={event} />
+          <Location event={event} hasError={schedulingError?.location} />
         </div>
-        <PlayerList playerIds={[event.facilitator, ...event.players]} />
+        <PlayerList
+          playerIds={[event.facilitator, ...event.players]}
+          errorPlayerIds={schedulingError?.participantIds}
+        />
       </div>
       <Modal isOpen={isOpen} title={event.name} onClose={closeModal}>
         {isOpen && <EventEditor event={event} closeEditor={closeModal} />}
@@ -45,8 +50,8 @@ export const EventComponent = ({ event }: EventProps) => {
   );
 };
 
-export const EventCell = ({ event }: EventProps) => (
+export const EventCell = ({ event, schedulingError }: EventProps) => (
   <td colSpan={event.length}>
-    <EventComponent event={event} />
+    <EventComponent event={event} schedulingError={schedulingError} />
   </td>
 );

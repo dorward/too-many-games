@@ -10,5 +10,10 @@
     font-size: 0.8rem;
     padding: var(--default-padding);
     border-radius: var(--border-radius);
+
+    &.error {
+      background-color: var(--color-error-default);
+      color: var(--color-text-inverse);
+    }
   }
 }

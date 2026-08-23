@@ -1,13 +1,15 @@
 import type { OrganisedScheduleDays } from "../../types";
+import type { SchedulingErrors } from "../../scheduler/getSchedulingErrors";
 import { DayOfWeekCell } from "./DayOfWeekCell";
 import { EventCell } from "../Event/Event";
 
 interface EventGridBodyProps {
   schedule: OrganisedScheduleDays;
   maxEventsPerDay: Record<string, number>;
+  schedulingErrors: SchedulingErrors;
 }
 
-export const EventGridBody = ({ schedule, maxEventsPerDay }: EventGridBodyProps) =>
+export const EventGridBody = ({ schedule, maxEventsPerDay, schedulingErrors }: EventGridBodyProps) =>
   Object.entries(schedule)
     .map(([date, slots]) => {
       const max = maxEventsPerDay[date];
@@ -29,7 +31,13 @@ export const EventGridBody = ({ schedule, maxEventsPerDay }: EventGridBodyProps)
             rowData.push(<td key={col} />);
           }
           if (event) {
-            rowData.push(<EventCell key={col} event={event} />);
+            rowData.push(
+              <EventCell
+                key={col}
+                event={event}
+                schedulingError={schedulingErrors.get(event.id)}
+              />,
+            );
           }
         }
 

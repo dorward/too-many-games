@@ -2,6 +2,7 @@ import type { AppData, Assignment, Event } from "../types";
 import { applyAssignmentsToEvents } from "./applyAssignmentsToEvents";
 import AutoSolveWorker from "./autoSolve.worker?worker";
 import type { WorkerMessage } from "./worker.types";
+import { getSchedulingErrors } from "./getSchedulingErrors";
 
 interface Options {
   timeLimitMs?: number;
@@ -39,7 +40,14 @@ export const autoSolve = (data: AppData, options: Options = {}): Promise<Event[]
 
         worker.terminate();
 
-        resolve(applyAssignmentsToEvents(data.events, bestAssignments));
+        const events = applyAssignmentsToEvents(data.events, bestAssignments);
+        const schedulingErrors = getSchedulingErrors(events);
+        if (schedulingErrors.size > 0) {
+          reject(new Error("Autoscheduler produced a schedule with conflicts"));
+          return;
+        }
+
+        resolve(events);
       }
     };
 

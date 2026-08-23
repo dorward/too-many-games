@@ -3,10 +3,11 @@ import { TooManyGamesContext } from "../../context/TooManyGamesContext";
 import "./playerList.css";
 
 interface PlayerListProps {
+  errorPlayerIds?: Set<string>;
   playerIds: string[];
 }
 
-export const PlayerList = ({ playerIds }: PlayerListProps) => {
+export const PlayerList = ({ errorPlayerIds, playerIds }: PlayerListProps) => {
   const context = useContext(TooManyGamesContext);
 
   const players = useMemo(
@@ -20,7 +21,9 @@ export const PlayerList = ({ playerIds }: PlayerListProps) => {
   return (
     <ul className="playerList">
       {players.map(({ name, id }) => (
-        <li key={id}>{name}</li>
+        <li className={errorPlayerIds?.has(id) ? "error" : undefined} key={id}>
+          {name}
+        </li>
       ))}
     </ul>
   );

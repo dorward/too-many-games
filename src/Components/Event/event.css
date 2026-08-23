@@ -14,3 +14,13 @@
     }
   }
 }
+
+.event.error {
+  border-color: var(--color-error-default);
+}
+
+.location.error {
+  color: var(--color-error-default);
+  outline: solid 1px var(--color-error-default);
+  font-weight: 700;
+}

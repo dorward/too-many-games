@@ -1,7 +1,12 @@
 import type { Event, OrganisedScheduleDays } from "../../types";
+import { useMemo } from "react";
 import { useTooManyGamesData } from "../../context/useTooManyGamesData";
 import { EventGridBody } from "./EventGridBody";
 import { EventComponent } from "../Event/Event";
+import {
+  getSchedulingErrors,
+  type SchedulingErrors,
+} from "../../scheduler/getSchedulingErrors";
 import "./eventGrid.css";
 
 const prepareEventsForRendering = (events: Event[]) => {
@@ -55,6 +60,67 @@ const getMaxGamesPerDay = (schedule: OrganisedScheduleDays) => {
   return maxGamesPerDay;
 };
 
+interface EventGridTableProps {
+  maxGamesPerDay: Record<string, number>;
+  schedule: OrganisedScheduleDays;
+  schedulingErrors: SchedulingErrors;
+}
+
+const EventGridTable = ({
+  maxGamesPerDay,
+  schedule,
+  schedulingErrors,
+}: EventGridTableProps) => (
+  <table className="eventGrid">
+    <colgroup>
+      <col />
+      <col />
+      <col />
+      <col />
+    </colgroup>
+    <thead>
+      <tr>
+        <th>Day</th>
+        <th>Morning</th>
+        <th>Afternoon</th>
+        <th>Evening</th>
+      </tr>
+    </thead>
+    <tbody>
+      <EventGridBody
+        maxEventsPerDay={maxGamesPerDay}
+        schedule={schedule}
+        schedulingErrors={schedulingErrors}
+      />
+    </tbody>
+  </table>
+);
+
+const UnscheduledEvents = ({
+  schedulingErrors,
+  unscheduled,
+}: {
+  schedulingErrors: SchedulingErrors;
+  unscheduled: Event[];
+}) => {
+  if (unscheduled.length === 0) {
+    return null;
+  }
+
+  return (
+    <>
+      <h2>Unscheduled</h2>
+      <ul className="unscheduled">
+        {unscheduled.map((event) => (
+          <li key={event.id}>
+            <EventComponent event={event} schedulingError={schedulingErrors.get(event.id)} />
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+};
+
 export const EventGrid = () => {
   const { data } = useTooManyGamesData();
 
@@ -63,38 +129,18 @@ export const EventGrid = () => {
   }
 
   const { events } = data;
+  const schedulingErrors = useMemo(() => getSchedulingErrors(events), [events]);
   const { schedule, unscheduled } = prepareEventsForRendering(events);
   const maxGamesPerDay = getMaxGamesPerDay(schedule);
 
   return (
     <>
-      <table className="eventGrid">
-        <col />
-        <col />
-        <col />
-        <col />
-        <thead>
-          <th>Day</th>
-          <th>Morning</th>
-          <th>Afternoon</th>
-          <th>Evening</th>
-        </thead>
-        <tbody>
-          <EventGridBody maxEventsPerDay={maxGamesPerDay} schedule={schedule} />
-        </tbody>
-      </table>
-      {unscheduled.length > 0 && (
-        <>
-          <h2>Unscheduled</h2>
-          <ul className="unscheduled">
-            {unscheduled.map((event) => (
-              <li key={event.id}>
-                <EventComponent key={event.id} event={event} />
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
+      <EventGridTable
+        maxGamesPerDay={maxGamesPerDay}
+        schedule={schedule}
+        schedulingErrors={schedulingErrors}
+      />
+      <UnscheduledEvents schedulingErrors={schedulingErrors} unscheduled={unscheduled} />
     </>
   );
 };

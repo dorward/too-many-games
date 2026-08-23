@@ -61,7 +61,8 @@ export const search = ({
       return true;
     });
 
-    dfs(index + 1, scheduledCount); // Also try leaving this event unscheduled.
+    if (timedOut) {return;}
+    if (!item.isRequired) {dfs(index + 1, scheduledCount);}
   };
 
   dfs(initialIndex, initialScheduledCount);

@@ -25,7 +25,7 @@ self.onmessage = (event: MessageEvent<WorkerInput>) => {
   const { locations, events } = data;
 
   const { allLocationIds, autoLocationIds } = categoriseLocations(locations);
-  const items = prepEvents(events, allLocationIds, autoLocationIds, slots.length);
+  const items = prepEvents(events, allLocationIds, autoLocationIds, slots);
 
   const store = createStore(slots.length);
   const { assignments } = store;
