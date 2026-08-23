@@ -29,7 +29,7 @@ export const EventComponent = ({ event, schedulingError }: EventProps) => {
     <div className={schedulingError?.hasError ? "event error" : "event"}>
       <header>
         <h2>{event.name}</h2>
-        <button onClick={openModal} aria-label={openMsg} title={openMsg}>
+        <button className="editButton" onClick={openModal} aria-label={openMsg} title={openMsg}>
           <FaRegEdit />
         </button>
       </header>

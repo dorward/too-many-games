@@ -4,6 +4,7 @@
   gap: var(--default-padding);
   list-style: none;
   display: flex;
+  flex-wrap: wrap;
 
   li {
     background-color: var(--color-bg-elevated);
