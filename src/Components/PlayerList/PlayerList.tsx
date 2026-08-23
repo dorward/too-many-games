@@ -14,7 +14,8 @@ export const PlayerList = ({ errorPlayerIds, playerIds }: PlayerListProps) => {
     () =>
       [...new Set(playerIds)]
         .map((id) => context?.data?.attendees.find((a) => a.id === id))
-        .filter((p) => p !== undefined),
+        .filter((p) => p !== undefined)
+        .toSorted((a, b) => a.name.localeCompare(b.name)),
     [playerIds, context?.data?.attendees],
   );
 
