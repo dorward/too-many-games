@@ -1,5 +1,5 @@
 import { useTooManyGamesData } from "../../context/useTooManyGamesData";
-import { gamesPerAttendee } from "../../data/derive/gamesPerAttendee";
+import { eventsPerAttendee } from "../../data/derive/eventsPerAttendee";
 import "./attendees.css";
 
 export const Attendees = () => {
@@ -19,11 +19,11 @@ export const Attendees = () => {
       </thead>
       <tbody>
         {data.attendees.map((a) => {
-          const { games, waitList } = gamesPerAttendee(a, data);
+          const { events, waitList } = eventsPerAttendee(a, data);
           return (
             <tr key={a.id}>
               <td>{a.name}</td>
-              <td>{games}</td>
+              <td>{events}</td>
               <td>{waitList}</td>
             </tr>
           );

@@ -1,12 +1,12 @@
-import type { Game, OrganisedScheduleDays } from "../../types";
+import type { Event, OrganisedScheduleDays } from "../../types";
 import { useTooManyGamesData } from "../../context/useTooManyGamesData";
 import { EventGridBody } from "./EventGridBody";
-import { Event } from "../Event/Event";
+import { EventComponent } from "../Event/Event";
 import "./eventGrid.css";
 
-const prepareEventsForRendering = (events: Game[]) => {
+const prepareEventsForRendering = (events: Event[]) => {
   const schedule: OrganisedScheduleDays = {};
-  const unscheduled: Game[] = [];
+  const unscheduled: Event[] = [];
 
   events
     .toSorted((a, b) => (a.startSlot ?? "").localeCompare(b.startSlot ?? ""))
@@ -80,7 +80,7 @@ export const EventGrid = () => {
           <th>Evening</th>
         </thead>
         <tbody>
-          <EventGridBody maxGamesPerDay={maxGamesPerDay} schedule={schedule} />
+          <EventGridBody maxEventsPerDay={maxGamesPerDay} schedule={schedule} />
         </tbody>
       </table>
       {unscheduled.length > 0 && (
@@ -89,7 +89,7 @@ export const EventGrid = () => {
           <ul className="unscheduled">
             {unscheduled.map((event) => (
               <li key={event.id}>
-                <Event key={event.id} event={event} list />
+                <EventComponent key={event.id} event={event} />
               </li>
             ))}
           </ul>

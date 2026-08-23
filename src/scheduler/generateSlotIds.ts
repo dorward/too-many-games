@@ -1,4 +1,5 @@
 import type { Dates, SlotId } from "../types";
+import memoize from "memoize";
 
 const LENGTH_OF_ISO_DATE = 10;
 
@@ -19,8 +20,8 @@ const addDays = (date: Date, days: number) => {
 const formatDate = (date: Date) =>
   `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 
-// TODO: Memoise this
-export const generateSlotIds = (dates: Dates) => {
+// Generates IDs for three slots in each day between the start and end days (but not including them as they are reserved for travel)
+export const generateSlotIds = memoize((dates: Dates) => {
   const slots: SlotId[] = [];
   const start = startOfDay(dates.start);
   const end = startOfDay(dates.end);
@@ -49,4 +50,4 @@ export const generateSlotIds = (dates: Dates) => {
   const days = Array.from(grouped.entries());
 
   return { days, slots };
-};
+});

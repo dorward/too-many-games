@@ -1,49 +1,93 @@
-import { useContext } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import { autoSolve } from "../../scheduler/autoSolve";
-import { TooManyGamesContext } from "../../context/TooManyGamesContext";
+import { useTooManyGamesData } from "../../context/useTooManyGamesData";
+import type { ContextValue, Event } from "../../types";
 
-export const useUploadData = () => {
-  const context = useContext(TooManyGamesContext);
+const downloadFile = (data: any) => {
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([json], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "eventData.json";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+};
+
+const clearEventSchedule = (event: Event): Event => {
+  const clearedEvent = { ...event };
+  delete clearedEvent.location;
+  delete clearedEvent.startSlot;
+  return clearedEvent;
+};
+
+interface UseUploadReturn {
+  countdown: null | number;
+  onLoad: () => void;
+  onSave: () => void;
+  onSchedule: () => void;
+  onClearSchedule: () => void;
+}
+
+const autoSchedule = async (
+  { data, setData }: ContextValue,
+  setCountdown: Dispatch<SetStateAction<number | null>>,
+) => {
+  if (!data) {
+    return;
+  }
+
+  try {
+    const events = await autoSolve(data, { setCountdown });
+    setData({ ...data, events });
+  } finally {
+    setCountdown(null);
+  }
+};
+
+export const useUploadData = (): UseUploadReturn => {
+  const context = useTooManyGamesData();
+  const [countdown, setCountdown] = useState<null | number>(null);
+
   const onSave = () => {
-    if (context === null) {
-      throw new Error("Unexpected missing context");
-    }
-    const json = JSON.stringify(context.data, null, 2);
-    const blob = new Blob([json], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "eventData.json";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
+    downloadFile(context.data);
   };
 
   const onLoad = () => {
-    if (context === null) {
-      throw new Error("Unexpected missing context");
-    }
     if (confirm("Discard all data and return to the load screen?")) {
       context.setData(null);
     }
   };
 
-  const onSchedule = () => {
-    if (context === null) {
-      throw new Error("Unexpected missing context");
-    }
-
-    if (!context.data) {
+  const onSchedule = (): void => {
+    const { data } = context;
+    if (!data) {
       alert("Missing event information. Cannot schedule");
       return;
     }
 
     if (confirm("Run auto-scheduler?")) {
-      const events = autoSolve(context.data);
-      context.setData({ ...context.data, events });
+      void autoSchedule(context, setCountdown);
     }
   };
 
-  return { onLoad, onSave, onSchedule };
+  const onClearSchedule = () => {
+    const { data } = context;
+    if (!data) {
+      return;
+    }
+
+    if (!confirm("Delete all scheduling data?")) {
+      return;
+    }
+
+    context.setData({
+      ...data,
+      events: data.events.map(clearEventSchedule),
+    });
+  };
+
+  return { countdown, onClearSchedule, onLoad, onSave, onSchedule };
 };

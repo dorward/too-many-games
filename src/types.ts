@@ -22,7 +22,7 @@ const locationSchema = {
   type: "object",
 } as const;
 
-const gameSchema = {
+const eventSchema = {
   additionalProperties: false,
   properties: {
     facilitator: { type: "string" },
@@ -91,7 +91,7 @@ export const appDataSchema = {
     },
     dates: datesSchema,
     events: {
-      items: gameSchema,
+      items: eventSchema,
       type: "array",
     },
     locations: {
@@ -105,7 +105,7 @@ export const appDataSchema = {
 
 export type Attendee = FromSchema<typeof attendeeSchema>;
 export type Location = FromSchema<typeof locationSchema>;
-export type Game = FromSchema<typeof gameSchema>;
+export type Event = FromSchema<typeof eventSchema>;
 export interface Dates {
   start: Date;
   end: Date;
@@ -114,12 +114,12 @@ export type AppData = Omit<FromSchema<typeof appDataSchema>, "dates"> & {
   dates: Dates;
 };
 
-export type SlotId = Exclude<Game["startSlot"], undefined>;
+export type SlotId = Exclude<Event["startSlot"], undefined>;
 
 export interface ContextValue {
   data: null | AppData;
   setData: Dispatch<SetStateAction<AppData | null>>;
-  updateEvent: (eventId: string, update: Partial<Game>) => void;
+  updateEvent: (eventId: string, update: Partial<Event>) => void;
 }
 
 export type View = "attendees" | "event-list" | "event-grid";
@@ -127,5 +127,39 @@ const views: View[] = ["attendees", "event-list", "event-grid"];
 export const isView = (potential: string): potential is View =>
   (views as readonly string[]).includes(potential);
 
-export type OrganisedScheduleSlots = Record<string, (Game | null | undefined)[]>;
+export type OrganisedScheduleSlots = Record<string, (Event | null | undefined)[]>;
 export type OrganisedScheduleDays = Record<string, OrganisedScheduleSlots>;
+
+export interface EventWithScheduleHelpers {
+  candidateStartIndexes: number[];
+  fallbackLocs: LocationChoice[];
+  event: Event;
+  length: number;
+  participantCount: number;
+  participantMask: bigint;
+  preferredLocs: LocationChoice[];
+}
+
+export interface LocationChoice {
+  id: string;
+  mask: bigint;
+}
+
+export interface Store {
+  assignments: Map<
+    string,
+    {
+      startSlot: string;
+      location: string;
+    }
+  >;
+  slotLocationMasks: bigint[];
+  slotPlayerMasks: bigint[];
+}
+
+export type Assignment = Pick<Event, "startSlot" | "location">;
+
+export interface Limits {
+  startTime: number;
+  timeLimit: number;
+}

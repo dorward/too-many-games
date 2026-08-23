@@ -22,7 +22,11 @@
     "typescript/prefer-readonly-parameter-types": "off",
     "max-statements": ["warn", { "max": 20 }],
     "id-length": ["off"],
-    "max-params": ["warn", { "max": 5 }]
+    "max-params": ["warn", { "max": 5 }],
+    "typescript/strict-boolean-expressions": "off",
+    "capitalized-comments": "off",
+    "oxc/no-map-spread": "off",
+    "no-inline-comments": "off"
   },
   "options": {
     "typeAware": true,

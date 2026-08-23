@@ -7,10 +7,15 @@ export const getAttendee = (
   sheet: Worksheet,
   col: string,
   row: number,
-) => {
+): string | null => {
   const cell = cellAt(sheet, col, row);
   const { text } = cell;
+  if (!text) {
+    return null;
+  }
   const attendee = attendees.find((a) => a.name === text);
-  if (!attendee) {throw new Error(`Could not find ${text} in attendee list`);}
+  if (!attendee) {
+    throw new Error(`Could not find ${text} in attendee list`);
+  }
   return attendee.id;
 };

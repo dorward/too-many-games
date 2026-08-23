@@ -1,8 +1,8 @@
-import type { Game } from "../../types";
+import type { Event } from "../../types";
 import { slotData } from "../../util/slotData";
 
 interface ScheduledTimeProps {
-  event: Game;
+  event: Event;
 }
 
 export const ScheduledTime = ({ event }: ScheduledTimeProps) => {

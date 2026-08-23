@@ -1,12 +1,12 @@
 import { useCallback, useContext, useState } from "react";
 import { TooManyGamesContext } from "../../context/TooManyGamesContext";
-import type { Game } from "../../types";
+import type { Event } from "../../types";
 import { FaCheck } from "react-icons/fa";
 import { SlotEditor } from "./SlotEditor";
 import { LocationEditor } from "./LocationEditor";
 
 interface EventEditorProps {
-  event: Game;
+  event: Event;
   closeEditor: () => void;
 }
 

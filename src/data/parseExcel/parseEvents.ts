@@ -1,7 +1,7 @@
 import type { Workbook, Worksheet } from "exceljs";
 import { cellAt } from "./util/cellAt";
 import { v4 as uuid } from "uuid";
-import type { Attendee, Game, Location } from "../../types";
+import type { Attendee, Event, Location } from "../../types";
 import { getPlainTextFromCell } from "./util/getPlainTextFromCell";
 import { getAttendee } from "./getAttendee";
 import { getNumberFromCell } from "./util/getNumberFromCell";
@@ -32,6 +32,9 @@ const getPlayers = (
   do {
     try {
       const id = getAttendee(attendees, sheet, colId, row);
+      if (id === null) {
+        break;
+      }
       if (players.length === maxPlayers) {
         waitList.push(id);
       } else {
@@ -56,7 +59,7 @@ export const parseEvents = (
     throw new Error("Could not find 'Game Scheduling' sheet");
   }
 
-  const games: Game[] = [];
+  const events: Event[] = [];
 
   for (let row = START_ROW; row < SANITY_BRAKE_ROWS; row++) {
     const name = getPlainTextFromCell(sheet, COLUMN_NAME, row);
@@ -71,17 +74,22 @@ export const parseEvents = (
       );
     }
     const facilitator = getAttendee(attendees, sheet, COLUMN_FACILITATOR, row);
+    if (facilitator === null) {
+      throw new Error(
+        `Expected an attendee in cell ${COLUMN_FACILITATOR}${row} in worksheet Game Scheduling`,
+      );
+    }
     const preferredSpace = (getPlainTextFromCell(sheet, COLUMN_SPACE, row) ?? "")
       .split(",")
       .map((space) => locations.find((location) => location.name === space.trim())?.id)
       .filter((value): value is string => typeof value === "string" && value.length > 0);
-    const playerCount: Game["playerCount"] = {
+    const playerCount: Event["playerCount"] = {
       desirable: getNumberFromCell(sheet, COLUMN_P_DES, row),
       max: getNumberFromCell(sheet, COLUMN_P_MAX, row),
       min: getNumberFromCell(sheet, COLUMN_P_MIN, row),
     };
     const [players, waitList] = getPlayers(attendees, sheet, row, playerCount.max);
-    games.push({
+    events.push({
       facilitator,
       id: uuid(),
       length,
@@ -94,5 +102,5 @@ export const parseEvents = (
     });
   }
 
-  return games;
+  return events;
 };

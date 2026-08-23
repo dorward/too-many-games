@@ -1,13 +1,12 @@
 import { useCallback, useMemo } from "react";
-import type { AppData, Game } from "../../types";
+import type { AppData, Event } from "../../types";
 import { generateSlotIds } from "../../scheduler/generateSlotIds";
 import { slotData } from "../../util/slotData";
-
-const SLOTS_PER_DAY = 3;
+import { SLOTS_PER_DAY } from "../../consts";
 
 interface SlotEditorProps {
   dates: AppData["dates"];
-  event: Game;
+  event: Event;
   setSlot: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 

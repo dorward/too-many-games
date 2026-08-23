@@ -1,9 +1,9 @@
 import { useCallback, useMemo } from "react";
-import type { AppData, Game } from "../../types";
+import type { AppData, Event } from "../../types";
 
 interface LocationEditorProps {
   locations: AppData["locations"];
-  event: Game;
+  event: Event;
   setLocation: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 

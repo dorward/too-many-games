@@ -1,6 +1,6 @@
-import type { Game } from "../types";
+import type { Event } from "../types";
 
-export const describeSchedule = (event: Game): string => {
+export const describeSchedule = (event: Event): string => {
   if (event.startSlot === undefined) {
     return "Unscheduled";
   }

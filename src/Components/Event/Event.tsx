@@ -1,19 +1,18 @@
+import type { Event } from "../../types";
 import { useCallback, useState } from "react";
-import type { Game } from "../../types";
 import { Modal } from "../event-grid/Modal";
 import { FaRegEdit } from "react-icons/fa";
 import { PlayerList } from "../PlayerList/PlayerList";
-import "./event.css";
 import { ScheduledTime } from "../ScheduledTime/ScheduledTime";
 import { Location } from "../Location/Location";
 import { EventEditor } from "./EventEditor";
+import "./event.css";
 
 interface EventProps {
-  event: Game;
-  list?: boolean;
+  event: Event;
 }
 
-const EventComponent = ({ event }: EventProps) => {
+export const EventComponent = ({ event }: EventProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = useCallback(() => {
     setIsOpen(false);
@@ -22,11 +21,13 @@ const EventComponent = ({ event }: EventProps) => {
     setIsOpen(true);
   }, []);
 
+  const openMsg = `Open ${event.name}`;
+
   return (
     <div className="event">
       <header>
         <h2>{event.name}</h2>
-        <button onClick={openModal} aria-label={`Open ${event.name}`}>
+        <button onClick={openModal} aria-label={openMsg} title={openMsg}>
           <FaRegEdit />
         </button>
       </header>
@@ -44,15 +45,8 @@ const EventComponent = ({ event }: EventProps) => {
   );
 };
 
-export const Event = ({ event, list }: EventProps) => {
-  const inList = list ?? false;
-  if (inList) {
-    return <EventComponent event={event} />;
-  }
-
-  return (
-    <td colSpan={event.length}>
-      <EventComponent event={event} />
-    </td>
-  );
-};
+export const EventCell = ({ event }: EventProps) => (
+  <td colSpan={event.length}>
+    <EventComponent event={event} />
+  </td>
+);

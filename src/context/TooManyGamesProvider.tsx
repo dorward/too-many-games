@@ -1,12 +1,12 @@
 import { type ReactNode, useCallback, useMemo, useState } from "react";
 import { TooManyGamesContext } from "./TooManyGamesContext";
-import type { AppData, Game } from "../types";
+import type { AppData, Event } from "../types";
 
 export const TooManyGamesProvider = ({ children }: { children: ReactNode }) => {
   const [data, setData] = useState<AppData | null>(null);
 
   const updateEvent = useCallback(
-    (eventId: string, update: Partial<Game>) => {
+    (eventId: string, update: Partial<Event>) => {
       if (!data?.events) {
         return;
       }
