@@ -1,7 +1,7 @@
 import type { AppData, Assignment, Event } from "../types";
 import { applyAssignmentsToEvents } from "./applyAssignmentsToEvents";
 import AutoSolveWorker from "./autoSolve.worker?worker";
-import type { WorkerMessage } from "./worker.types";
+import type { Complete, WorkerMessage } from "./worker.types";
 import { getSchedulingErrors } from "./getSchedulingErrors";
 
 interface Options {
@@ -9,61 +9,93 @@ interface Options {
   setCountdown?: (ms: number) => void;
 }
 
+const isAssignment = (data: unknown): data is Assignment =>
+  data !== null &&
+  typeof data === "object" &&
+  "location" in data &&
+  typeof data.location === "string" &&
+  "startSlot" in data &&
+  typeof data.startSlot === "string";
+
 const isMessage = (data: unknown): data is WorkerMessage => {
   if (data === null || typeof data !== "object") {
     return false;
   }
-  if (!("type" in data) || typeof data.type !== "string") {
+  if (!("type" in data)) {
     return false;
   }
-  return data.type === "complete" || data.type === "started";
+  if (data.type === "started") {
+    return "timeLimit" in data && typeof data.timeLimit === "number";
+  }
+  if (data.type !== "complete") {
+    return false;
+  }
+  return (
+    "bestAssignments" in data &&
+    data.bestAssignments !== null &&
+    typeof data.bestAssignments === "object" &&
+    !Array.isArray(data.bestAssignments) &&
+    Object.values(data.bestAssignments).every(isAssignment) &&
+    "bestCount" in data &&
+    typeof data.bestCount === "number"
+  );
+};
+
+const getError = (error: unknown) =>
+  error instanceof Error ? error : new Error("Unknown auto-scheduler error");
+
+const applyWorkerResult = (data: AppData, message: Complete) => {
+  const bestAssignments = new Map<string, Assignment>(Object.entries(message.bestAssignments));
+  const events = applyAssignmentsToEvents(data.events, bestAssignments);
+  if (getSchedulingErrors(events).size > 0) {
+    throw new Error("Autoscheduler produced a schedule with conflicts");
+  }
+  return events;
 };
 
 export const autoSolve = (data: AppData, options: Options = {}): Promise<Event[]> =>
   new Promise((resolve, reject) => {
     const worker = new AutoSolveWorker();
+    const rejectWorker = (error: unknown) => {
+      worker.terminate();
+      reject(getError(error));
+    };
 
     worker.onmessage = (event) => {
-      if (!isMessage(event.data)) {
-        throw new Error("Worker message does not match expected type");
-      }
-      const message = event.data;
-
-      if (message.type === "started") {
-        options.setCountdown?.(message.timeLimit);
-      }
-
-      if (message.type === "complete") {
-        const bestAssignments = new Map<string, Assignment>(
-          Object.entries(message.bestAssignments),
-        );
-
-        worker.terminate();
-
-        const events = applyAssignmentsToEvents(data.events, bestAssignments);
-        const schedulingErrors = getSchedulingErrors(events);
-        if (schedulingErrors.size > 0) {
-          reject(new Error("Autoscheduler produced a schedule with conflicts"));
+      try {
+        if (!isMessage(event.data)) {
+          rejectWorker(new Error("Worker message does not match expected type"));
           return;
         }
+        const message = event.data;
 
-        resolve(events);
+        if (message.type === "started") {
+          options.setCountdown?.(message.timeLimit);
+        }
+
+        if (message.type === "complete") {
+          worker.terminate();
+          resolve(applyWorkerResult(data, message));
+        }
+      } catch (error: unknown) {
+        rejectWorker(error);
       }
     };
 
     worker.onmessageerror = () => {
-      worker.terminate();
-      reject(new Error("Worker message deserialization error"));
+      rejectWorker(new Error("Worker message deserialization error"));
     };
 
     worker.onerror = (errorEvent) => {
-      worker.terminate();
-      const error = new Error(errorEvent.message);
-      reject(error);
+      rejectWorker(new Error(errorEvent.message));
     };
 
-    worker.postMessage({
-      data,
-      timeLimitMs: options.timeLimitMs,
-    });
+    try {
+      worker.postMessage({
+        data,
+        timeLimitMs: options.timeLimitMs,
+      });
+    } catch (error: unknown) {
+      rejectWorker(error);
+    }
   });

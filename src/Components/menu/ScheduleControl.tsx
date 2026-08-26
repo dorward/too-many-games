@@ -8,12 +8,18 @@ interface ScheduleControlProps {
   onSchedule: () => Promise<boolean>;
 }
 
-type ScheduleDialogState = "all-scheduled" | "confirm" | "conflicts" | "no-changes";
+type ScheduleDialogState =
+  | "all-scheduled"
+  | "confirm"
+  | "conflicts"
+  | "failed"
+  | "no-changes";
 
 interface ScheduleDialogProps extends ScheduleControlProps {
   closeDialog: () => void;
   dialogState: ScheduleDialogState;
   isOpen: boolean;
+  schedulingError: string | null;
 }
 
 const ScheduleDialogActions = ({
@@ -45,10 +51,14 @@ const dialogTitles: Record<ScheduleDialogState, string> = {
   "all-scheduled": "Schedule complete",
   confirm: "Run auto-scheduler",
   conflicts: "Scheduling conflicts",
+  failed: "Scheduling failed",
   "no-changes": "No scheduling changes",
 };
 
-const ScheduleDialogMessage = ({ dialogState }: { dialogState: ScheduleDialogState }) => {
+const ScheduleDialogMessage = ({
+  dialogState,
+  schedulingError,
+}: Pick<ScheduleDialogProps, "dialogState" | "schedulingError">) => {
   switch (dialogState) {
     case "conflicts":
       return (
@@ -59,6 +69,12 @@ const ScheduleDialogMessage = ({ dialogState }: { dialogState: ScheduleDialogSta
       );
     case "all-scheduled":
       return <p role="status">All events are already scheduled.</p>;
+    case "failed":
+      return (
+        <p className="modal-error" role="alert">
+          {schedulingError ?? "An unknown auto-scheduler error occurred."}
+        </p>
+      );
     case "no-changes":
       return (
         <p role="status">
@@ -76,7 +92,11 @@ const getDialogState = (
   allEventsScheduled: boolean,
   hasConflicts: boolean,
   noChanges: boolean,
+  schedulingError: string | null,
 ): ScheduleDialogState => {
+  if (schedulingError !== null) {
+    return "failed";
+  }
   if (hasConflicts) {
     return "conflicts";
   }
@@ -94,6 +114,7 @@ const ScheduleDialog = ({
   dialogState,
   isOpen,
   onSchedule,
+  schedulingError,
 }: ScheduleDialogProps) => {
   const confirmSchedule = useCallback<React.SubmitEventHandler<HTMLFormElement>>(
     (submitEvent) => {
@@ -110,7 +131,7 @@ const ScheduleDialog = ({
   return (
     <Modal isOpen={isOpen} onClose={closeDialog} title={dialogTitles[dialogState]}>
       <form onSubmit={confirmSchedule}>
-        <ScheduleDialogMessage dialogState={dialogState} />
+        <ScheduleDialogMessage dialogState={dialogState} schedulingError={schedulingError} />
         <ScheduleDialogActions
           canSchedule={dialogState === "confirm"}
           closeDialog={closeDialog}
@@ -120,10 +141,45 @@ const ScheduleDialog = ({
   );
 };
 
+const getErrorMessage = (error: unknown) =>
+  error instanceof Error && error.message.length > 0
+    ? error.message
+    : "An unknown auto-scheduler error occurred.";
+
+const useSchedulerResult = (
+  onSchedule: ScheduleControlProps["onSchedule"],
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>,
+) => {
+  const [noChanges, setNoChanges] = useState(false);
+  const [schedulingError, setSchedulingError] = useState<string | null>(null);
+  const resetResult = useCallback(() => {
+    setNoChanges(false);
+    setSchedulingError(null);
+  }, []);
+  const runScheduler = useCallback(async () => {
+    try {
+      const hasChanges = await onSchedule();
+      if (!hasChanges) {
+        setNoChanges(true);
+        setIsOpen(true);
+      }
+      return hasChanges;
+    } catch (error: unknown) {
+      setSchedulingError(getErrorMessage(error));
+      setIsOpen(true);
+      return false;
+    }
+  }, [onSchedule, setIsOpen]);
+  return { noChanges, resetResult, runScheduler, schedulingError };
+};
+
 export const ScheduleControl = ({ onSchedule }: ScheduleControlProps) => {
   const { data } = useTooManyGamesData();
   const [isOpen, setIsOpen] = useState(false);
-  const [noChanges, setNoChanges] = useState(false);
+  const { noChanges, resetResult, runScheduler, schedulingError } = useSchedulerResult(
+    onSchedule,
+    setIsOpen,
+  );
   const allEventsScheduled = useMemo(
     () => data !== null && data.events.every(({ startSlot }) => startSlot !== undefined),
     [data],
@@ -132,22 +188,19 @@ export const ScheduleControl = ({ onSchedule }: ScheduleControlProps) => {
     () => data !== null && getSchedulingErrors(data.events).size > 0,
     [data],
   );
-  const dialogState = getDialogState(allEventsScheduled, hasConflicts, noChanges);
+  const dialogState = getDialogState(
+    allEventsScheduled,
+    hasConflicts,
+    noChanges,
+    schedulingError,
+  );
   const closeDialog = useCallback(() => {
     setIsOpen(false);
   }, []);
   const openDialog = useCallback(() => {
-    setNoChanges(false);
+    resetResult();
     setIsOpen(true);
-  }, []);
-  const runScheduler = useCallback(async () => {
-    const hasChanges = await onSchedule();
-    if (!hasChanges) {
-      setNoChanges(true);
-      setIsOpen(true);
-    }
-    return hasChanges;
-  }, [onSchedule]);
+  }, [resetResult]);
 
   return (
     <>
@@ -159,6 +212,7 @@ export const ScheduleControl = ({ onSchedule }: ScheduleControlProps) => {
         dialogState={dialogState}
         isOpen={isOpen}
         onSchedule={runScheduler}
+        schedulingError={schedulingError}
       />
     </>
   );
