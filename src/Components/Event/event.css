@@ -45,6 +45,14 @@
   }
 }
 
+.conflictWarning {
+  background: var(--color-warning-subtle);
+  border: solid 1px var(--color-warning-default);
+  border-radius: var(--border-radius);
+  margin: 0;
+  padding: var(--default-padding);
+}
+
 @media print {
   .editButton {
     display: none;
