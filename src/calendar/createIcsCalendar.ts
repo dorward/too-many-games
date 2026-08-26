@@ -54,6 +54,16 @@ const getEventDateTimes = (event: Event) => {
 const getLocationName = (locations: Location[], event: Event) =>
   locations.find((location) => location.id === event.location)?.name ?? "";
 
+const getEventTitle = (event: Event, attendee: Attendee) => {
+  if (event.waitList.includes(attendee.id)) {
+    return `${event.name} (Waitlist)`;
+  }
+  if (event.facilitator === attendee.id && !event.players.includes(attendee.id)) {
+    return `${event.name} (Facilitator)`;
+  }
+  return event.name;
+};
+
 const createEventLines = (
   event: Event,
   attendee: Attendee,
@@ -72,7 +82,7 @@ const createEventLines = (
     `DTSTAMP:${dtstamp}`,
     `DTSTART:${dateTimes.start}`,
     `DTEND:${dateTimes.end}`,
-    `SUMMARY:${escapeText(event.name)}`,
+    `SUMMARY:${escapeText(getEventTitle(event, attendee))}`,
     location ? `LOCATION:${escapeText(location)}` : undefined,
     event.notes ? `DESCRIPTION:${escapeText(event.notes)}` : undefined,
     "END:VEVENT",
