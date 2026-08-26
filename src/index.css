@@ -64,7 +64,7 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
+@media screen and (prefers-color-scheme: dark) {
   :root {
     /* Backgrounds */
     --color-bg-default: #0b1220;
@@ -127,6 +127,10 @@
 }
 
 @media print {
+  :root {
+    color-scheme: light;
+  }
+
   :root,
   #root {
     background: none;
