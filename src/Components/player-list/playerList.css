@@ -7,10 +7,39 @@
   flex-wrap: wrap;
 
   li {
-    background-color: var(--color-bg-elevated);
+    border: 1px solid transparent;
     font-size: 0.8rem;
+    min-width: 6ch;
     padding: var(--default-padding);
     border-radius: var(--border-radius);
+
+    &.count-within-min {
+      background-color: var(--color-bg-elevated);
+    }
+
+    &.count-within-desirable {
+      background-color: var(--color-success-subtle);
+    }
+
+    &.count-within-max {
+      background-color: var(--color-warning-subtle);
+    }
+
+    &.count-waitlisted {
+      background-color: var(--color-error-subtle);
+    }
+
+    &.facilitator {
+      border-color: var(--color-border-elevated);
+    }
+
+    &.non-playing-facilitator {
+      background-color: var(--color-bg-elevated);
+    }
+
+    &:empty::before {
+      content: "\00a0";
+    }
 
     &.error {
       background-color: var(--color-error-default);

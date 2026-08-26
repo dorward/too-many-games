@@ -39,7 +39,10 @@ export const EventComponent = ({ event, schedulingError }: EventProps) => {
           <Location event={event} hasError={schedulingError?.location} />
         </div>
         <PlayerList
-          playerIds={[event.facilitator, ...event.players]}
+          facilitatorId={event.facilitator}
+          playerIds={event.players}
+          waitListIds={event.waitList}
+          playerCount={event.playerCount}
           errorPlayerIds={schedulingError?.participantIds}
         />
       </div>
