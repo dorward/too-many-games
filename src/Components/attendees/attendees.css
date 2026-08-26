@@ -2,4 +2,8 @@
   td:not(:first-child) {
     text-align: right;
   }
+
+  th:not(:first-child) .sort-button {
+    justify-content: flex-end;
+  }
 }

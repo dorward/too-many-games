@@ -1,0 +1,29 @@
+th:has(> .sort-button) {
+  padding: 0;
+}
+
+.sort-button {
+  align-items: center;
+  background: none;
+  border: 0;
+  box-sizing: border-box;
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  gap: 0.35rem;
+  justify-content: inherit;
+  padding: var(--default-padding);
+  text-align: inherit;
+  width: 100%;
+}
+
+.sort-button:hover {
+  color: var(--color-text-inverse);
+}
+
+@media print {
+  .sort-button svg {
+    display: none;
+  }
+}
