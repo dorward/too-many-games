@@ -33,7 +33,7 @@ export const Processing = ({ ms }: Props) => {
   }, [ms]);
 
   return (
-    <dialog className="modal" closedby="none" open>
+    <dialog className="modal processing" closedby="none" open>
       <p>Computing the best possible schedule in {remaining} seconds or less</p>
     </dialog>
   );

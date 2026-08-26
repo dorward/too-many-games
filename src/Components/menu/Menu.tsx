@@ -1,12 +1,13 @@
 // oxlint-disable max-lines-per-function
-import { FaCalendarCheck, FaDownload, FaUpload } from "react-icons/fa";
+import { FaDownload, FaUpload } from "react-icons/fa";
 import "./menu.css";
 import { isView, type Attendee, type View } from "../../types";
 import { Navigation } from "./Navigation";
 import { Processing } from "./Processing";
-import { MdAutoDelete } from "react-icons/md";
 import { ParticipantFilter } from "./ParticipantFilter";
 import { useCallback } from "react";
+import { ScheduleControl } from "./ScheduleControl";
+import { ClearScheduleControl } from "./ClearScheduleControl";
 
 interface MenuProps {
   countdown: null | number;
@@ -14,7 +15,7 @@ interface MenuProps {
   onLoad: () => void;
   onParticipantFilterChange: React.ChangeEventHandler<HTMLSelectElement>;
   onSave: () => void;
-  onSchedule: () => void;
+  onSchedule: () => Promise<boolean>;
   participantFilter: string;
   participantOptions: Attendee[];
   setView: React.Dispatch<React.SetStateAction<View>>;
@@ -57,16 +58,8 @@ export const Menu = ({
           <button aria-label="Load" title="Load" onClick={onLoad}>
             <FaUpload />
           </button>
-          <button
-            aria-label="Run auto-scheduler"
-            title="Run auto-scheduler"
-            onClick={onSchedule}
-          >
-            <FaCalendarCheck />
-          </button>
-          <button aria-label="Clear schedule" title="Clear schedule" onClick={onClearSchedule}>
-            <MdAutoDelete />
-          </button>
+          <ScheduleControl onSchedule={onSchedule} />
+          <ClearScheduleControl onClearSchedule={onClearSchedule} />
           <ParticipantFilter
             onParticipantFilterChange={onParticipantFilterChange}
             participantFilter={participantFilter}

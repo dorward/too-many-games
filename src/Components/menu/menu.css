@@ -23,7 +23,7 @@
   button {
     height: 40px;
   }
-  dialog[open] {
+  dialog.processing[open] {
     position: fixed;
     inset: 1em;
     margin: 0;
@@ -39,7 +39,7 @@
       text-align: center;
     }
   }
-  dialog::backdrop {
+  dialog.processing::backdrop {
     background: rgba(0, 0, 0, 0.5);
   }
 }

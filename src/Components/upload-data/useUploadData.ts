@@ -27,7 +27,7 @@ interface UseUploadReturn {
   countdown: null | number;
   onLoad: () => void;
   onSave: () => void;
-  onSchedule: () => void;
+  onSchedule: () => Promise<boolean>;
   onClearSchedule: () => void;
   onParticipantFilterChange: React.ChangeEventHandler<HTMLSelectElement>;
   participantFilter: string;
@@ -37,14 +37,22 @@ interface UseUploadReturn {
 const autoSchedule = async (
   { data, setData }: ContextValue,
   setCountdown: Dispatch<SetStateAction<number | null>>,
-) => {
+): Promise<boolean> => {
   if (!data) {
-    return;
+    return false;
   }
 
   try {
     const events = await autoSolve(data, { setCountdown });
-    setData({ ...data, events });
+    const hasChanges = events.some(
+      (event, index) =>
+        event.location !== data.events[index]?.location ||
+        event.startSlot !== data.events[index]?.startSlot,
+    );
+    if (hasChanges) {
+      setData({ ...data, events });
+    }
+    return hasChanges;
   } finally {
     setCountdown(null);
   }
@@ -52,10 +60,6 @@ const autoSchedule = async (
 
 const clearSchedule = ({ data, setData }: ContextValue) => {
   if (!data) {
-    return;
-  }
-
-  if (!confirm("Delete all scheduling data?")) {
     return;
   }
 
@@ -74,15 +78,13 @@ const loadData = ({ setData }: ContextValue) => {
 const scheduleData = (
   context: ContextValue,
   setCountdown: Dispatch<SetStateAction<number | null>>,
-) => {
+): Promise<boolean> => {
   if (!context.data) {
     alert("Missing event information. Cannot schedule");
-    return;
+    return Promise.resolve(false);
   }
 
-  if (confirm("Run auto-scheduler?")) {
-    void autoSchedule(context, setCountdown);
-  }
+  return autoSchedule(context, setCountdown);
 };
 
 export const useUploadData = (): UseUploadReturn => {
@@ -113,9 +115,7 @@ export const useUploadData = (): UseUploadReturn => {
     },
     onParticipantFilterChange,
     onSave,
-    onSchedule: () => {
-      scheduleData(context, setCountdown);
-    },
+    onSchedule: () => scheduleData(context, setCountdown),
     participantFilter,
     participantOptions,
   };
