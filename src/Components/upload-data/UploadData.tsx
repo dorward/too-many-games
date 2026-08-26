@@ -1,10 +1,43 @@
-import { useDropzone } from "react-dropzone";
+import { useCallback, useState } from "react";
+import { type FileRejection, useDropzone } from "react-dropzone";
 import "./uploadData.css";
 import { parseFile } from "../../data/parseFile";
 import { useTooManyGamesData } from "../../context/useTooManyGamesData";
 
+const getErrorMessage = (error: unknown) =>
+  error instanceof Error ? error.message : "An unknown parsing error occurred";
+
+const FileRejectionItems = ({ fileRejections }: { fileRejections: readonly FileRejection[] }) =>
+  fileRejections.length > 0 ? (
+    <ul>
+      {fileRejections.map(({ file, errors }) => (
+        <li key={file.path}>
+          {file.path} - {file.size} bytes
+          <ul>
+            {errors.map((error) => (
+              <li key={error.code}>{error.message}</li>
+            ))}
+          </ul>
+        </li>
+      ))}
+    </ul>
+  ) : null;
+
 export const UploadData = () => {
   const { setData } = useTooManyGamesData();
+  const [parsingError, setParsingError] = useState<string | null>(null);
+
+  const onDropAccepted = useCallback(
+    (acceptedFiles: File[]) => {
+      setParsingError(null);
+      void parseFile(acceptedFiles)
+        .then(setData)
+        .catch((error: unknown) => {
+          setParsingError(getErrorMessage(error));
+        });
+    },
+    [setData],
+  );
 
   const { getRootProps, fileRejections, getInputProps, isDragActive } = useDropzone({
     accept: {
@@ -12,26 +45,8 @@ export const UploadData = () => {
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [],
     },
     maxFiles: 1,
-    onDrop: (acceptedFiles) => {
-      const doWork = async () => {
-        const appData = await parseFile(acceptedFiles);
-        setData(appData);
-      };
-      // TODO: Handle errors?
-      void doWork();
-    },
+    onDropAccepted,
   });
-
-  const fileRejectionItems = fileRejections.map(({ file, errors }) => (
-    <li key={file.path}>
-      {file.path} - {file.size} bytes
-      <ul>
-        {errors.map((e) => (
-          <li key={e.code}>{e.message}</li>
-        ))}
-      </ul>
-    </li>
-  ));
 
   return (
     <>
@@ -45,9 +60,14 @@ export const UploadData = () => {
           <p>
             <strong>Accepted filetypes:</strong> Excel &amp; JSON
           </p>
-          {fileRejectionItems.length ? <ul>{fileRejectionItems}</ul> : null}
+          <FileRejectionItems fileRejections={fileRejections} />
         </aside>
       </div>
+      {parsingError !== null && (
+        <p className="dropzone-error" role="alert">
+          {parsingError}
+        </p>
+      )}
     </>
   );
 };

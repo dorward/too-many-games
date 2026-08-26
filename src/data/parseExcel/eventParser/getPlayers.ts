@@ -14,19 +14,14 @@ export const getPlayers = (
   const players: Attendee["id"][] = [];
   const waitList: Attendee["id"][] = [];
   do {
-    try {
-      const id = getAttendee(attendees, sheet, colId, row);
-      if (id === null) {
-        break;
-      }
-      if (players.length === maxPlayers) {
-        waitList.push(id);
-      } else {
-        players.push(id);
-      }
-      // oxlint-disable-next-line no-unused-vars
-    } catch (_e: any) {
+    const id = getAttendee(attendees, sheet, colId, row);
+    if (id === null) {
       break;
+    }
+    if (players.length === maxPlayers) {
+      waitList.push(id);
+    } else {
+      players.push(id);
     }
     colId = numberToColId(colIdToNumber(colId) + 1);
   } while (colIdToNumber(colId) <= SANITY_BRAKE_COLS);

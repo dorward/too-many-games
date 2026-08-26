@@ -15,7 +15,7 @@ export const getAttendee = (
   }
   const attendee = attendees.find((a) => a.name === text);
   if (!attendee) {
-    throw new Error(`Could not find ${text} in attendee list`);
+    throw new Error(`Could not find "${text}" from cell ${col}${row} in the attendee list`);
   }
   return attendee.id;
 };
