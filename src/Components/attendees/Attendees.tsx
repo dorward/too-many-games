@@ -6,11 +6,12 @@ import { SortableHeader } from "../sortable-table/SortableHeader";
 import { getNextSortDirection, type SortDirection, sortDirections } from "../sortable-table/sortDirection";
 import "./attendees.css";
 
-type AttendeesSortColumn = "events" | "name" | "waitList";
+type AttendeesSortColumn = "events" | "facilitator" | "name" | "waitList";
 
 interface AttendeeRow {
   attendee: Attendee;
   events: number;
+  facilitator: number;
   waitList: number;
 }
 
@@ -37,6 +38,10 @@ const sortAttendees = (
 
     if (sortBy === "events") {
       return directionModifier * (a.events - b.events || compareByAttendeeName(a, b));
+    }
+
+    if (sortBy === "facilitator") {
+      return directionModifier * (a.facilitator - b.facilitator || compareByAttendeeName(a, b));
     }
 
     if (sortBy === "waitList") {
@@ -66,6 +71,14 @@ const AttendeesHeader = ({ onSort, sortBy, sortDirection }: AttendeesHeaderProps
         Games
       </SortableHeader>
       <SortableHeader
+        column="facilitator"
+        direction={sortDirection}
+        onSort={onSort}
+        sortBy={sortBy}
+      >
+        Facilitator (non-player)
+      </SortableHeader>
+      <SortableHeader
         column="waitList"
         direction={sortDirection}
         onSort={onSort}
@@ -79,10 +92,11 @@ const AttendeesHeader = ({ onSort, sortBy, sortDirection }: AttendeesHeaderProps
 
 const AttendeesBody = ({ attendees }: AttendeesBodyProps) => (
   <tbody>
-    {attendees.map(({ attendee, events, waitList }) => (
+    {attendees.map(({ attendee, events, facilitator, waitList }) => (
       <tr key={attendee.id}>
         <td>{attendee.name}</td>
         <td>{events}</td>
+        <td>{facilitator}</td>
         <td>{waitList}</td>
       </tr>
     ))}
@@ -99,9 +113,9 @@ export const Attendees = () => {
   }
 
   const attendeeRows = data.attendees.map((attendee) => {
-    const { events, waitList } = eventsPerAttendee(attendee, data);
+    const { events, facilitator, waitList } = eventsPerAttendee(attendee, data);
 
-    return { attendee, events, waitList };
+    return { attendee, events, facilitator, waitList };
   });
   const sortedAttendees = sortAttendees(attendeeRows, sortBy, sortDirection);
   const onSort = (column: AttendeesSortColumn) => {
