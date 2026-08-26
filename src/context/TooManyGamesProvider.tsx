@@ -1,5 +1,5 @@
 import { type ReactNode, useCallback, useMemo, useState } from "react";
-import { TooManyGamesContext } from "./TooManyGamesContext";
+import { tooManyGamesContext } from "./tooManyGamesContext";
 import type { AppData, Event } from "../types";
 
 export const TooManyGamesProvider = ({ children }: { children: ReactNode }) => {
@@ -25,5 +25,5 @@ export const TooManyGamesProvider = ({ children }: { children: ReactNode }) => {
 
   const value = useMemo(() => ({ data, setData, updateEvent }), [data, setData, updateEvent]);
 
-  return <TooManyGamesContext.Provider value={value}>{children}</TooManyGamesContext.Provider>;
+  return <tooManyGamesContext.Provider value={value}>{children}</tooManyGamesContext.Provider>;
 };

@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { TooManyGamesContext } from "../../context/TooManyGamesContext";
+import { tooManyGamesContext } from "../../context/tooManyGamesContext";
 import type { Event } from "../../types";
 
 interface LocationProps {
@@ -8,7 +8,7 @@ interface LocationProps {
 }
 
 export const Location = ({ event, hasError = false }: LocationProps) => {
-  const context = useContext(TooManyGamesContext);
+  const context = useContext(tooManyGamesContext);
   const locations = context?.data?.locations;
   const className = hasError ? "location error" : "location";
   if (!locations) {

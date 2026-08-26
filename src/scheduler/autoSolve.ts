@@ -1,7 +1,7 @@
 import type { AppData, Assignment, Event } from "../types";
 import { applyAssignmentsToEvents } from "./applyAssignmentsToEvents";
-import AutoSolveWorker from "./autoSolve.worker?worker";
-import type { Complete, WorkerMessage } from "./worker.types";
+import AutoSolveWorker from "./autoSolveWorker?worker";
+import type { Complete, WorkerMessage } from "./workerTypes";
 import { getSchedulingErrors } from "./getSchedulingErrors";
 
 interface Options {

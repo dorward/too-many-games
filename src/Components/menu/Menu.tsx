@@ -2,12 +2,12 @@
 import { FaDownload, FaUpload } from "react-icons/fa";
 import "./menu.css";
 import { isView, type Attendee, type View } from "../../types";
-import { Navigation } from "./Navigation";
+import { Navigation } from "./Navigation/Navigation";
 import { Processing } from "./Processing";
 import { ParticipantFilter } from "./ParticipantFilter";
 import { useCallback } from "react";
-import { ScheduleControl } from "./ScheduleControl";
-import { ClearScheduleControl } from "./ClearScheduleControl";
+import { ScheduleControl } from "./ScheduleControl/ScheduleControl";
+import { ClearScheduleControl } from "./ClearScheduleControl/ClearScheduleControl";
 
 interface MenuProps {
   countdown: null | number;

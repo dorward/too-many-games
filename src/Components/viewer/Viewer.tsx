@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useTooManyGamesData } from "../../context/useTooManyGamesData";
 import type { View } from "../../types";
-import { Menu } from "../menu/Menu";
-import { Attendees } from "../attendees/Attendees";
-import { EventList } from "../event-list/EventList";
-import { EventGrid } from "../event-grid/EventGrid";
-import { useUploadData } from "../upload-data/useUploadData";
-import { Schedules } from "../event-list/schedules/Schedules";
-import { SignupSheets } from "../signup-sheets/SignupSheets";
+import { Menu } from "../Menu/Menu";
+import { Attendees } from "../Attendees/Attendees";
+import { EventList } from "../EventList/EventList";
+import { EventGrid } from "../EventGrid/EventGrid";
+import { useUploadData } from "../UploadData/useUploadData";
+import { Schedules } from "../EventList/Schedules/Schedules";
+import { SignupSheets } from "../SignupSheets/SignupSheets";
 
 export const Viewer = () => {
   const context = useTooManyGamesData();

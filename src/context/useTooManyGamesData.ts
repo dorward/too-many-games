@@ -1,8 +1,8 @@
 import { useContext } from "react";
-import { TooManyGamesContext } from "./TooManyGamesContext";
+import { tooManyGamesContext } from "./tooManyGamesContext";
 
 export const useTooManyGamesData = () => {
-  const context = useContext(TooManyGamesContext);
+  const context = useContext(tooManyGamesContext);
   if (context === null) {throw new Error("Missing TooManyGamesProvider");}
   return context;
 };

@@ -1,6 +1,6 @@
 import { place } from "./place";
 import { unplace } from "./unplace";
-import { forEachValidPlacement } from "./getValidPlacements";
+import { forEachValidPlacement } from "./forEachValidPlacement";
 import type { Limits, EventWithScheduleHelpers, Store } from "../types";
 
 interface SearchProps {

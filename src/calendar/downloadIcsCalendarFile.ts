@@ -1,5 +1,5 @@
 import type { Attendee, Event, Location } from "../types";
-import { createAttendeeIcsCalendar } from "./createIcsCalendar";
+import { createAttendeeIcsCalendar } from "./createAttendeeIcsCalendar";
 
 const getCalendarFileName = (attendeeName: string) => {
   const fileName = attendeeName

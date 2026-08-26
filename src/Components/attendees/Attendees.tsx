@@ -1,29 +1,11 @@
 import { useState } from "react";
 import { useTooManyGamesData } from "../../context/useTooManyGamesData";
 import { eventsPerAttendee } from "../../data/derive/eventsPerAttendee";
-import type { Attendee } from "../../types";
-import { SortableHeader } from "../sortable-table/SortableHeader";
-import { getNextSortDirection, type SortDirection, sortDirections } from "../sortable-table/sortDirection";
+import { getNextSortDirection, type SortDirection, sortDirections } from "../SortableHeader/sortDirection";
+import { AttendeesBody } from "./AttendeesBody";
+import { AttendeesHeader } from "./AttendeesHeader";
+import type { AttendeeRow, AttendeesSortColumn } from "./attendeesTableTypes";
 import "./attendees.css";
-
-type AttendeesSortColumn = "events" | "facilitator" | "name" | "waitList";
-
-interface AttendeeRow {
-  attendee: Attendee;
-  events: number;
-  facilitator: number;
-  waitList: number;
-}
-
-interface AttendeesHeaderProps {
-  onSort: (column: AttendeesSortColumn) => void;
-  sortBy: AttendeesSortColumn;
-  sortDirection: SortDirection;
-}
-
-interface AttendeesBodyProps {
-  attendees: AttendeeRow[];
-}
 
 const compareByAttendeeName = (a: AttendeeRow, b: AttendeeRow) =>
   a.attendee.name.localeCompare(b.attendee.name);
@@ -50,58 +32,6 @@ const sortAttendees = (
 
     return directionModifier * compareByAttendeeName(a, b);
   });
-
-const AttendeesHeader = ({ onSort, sortBy, sortDirection }: AttendeesHeaderProps) => (
-  <thead>
-    <tr>
-      <SortableHeader
-        column="name"
-        direction={sortDirection}
-        onSort={onSort}
-        sortBy={sortBy}
-      >
-        Name
-      </SortableHeader>
-      <SortableHeader
-        column="events"
-        direction={sortDirection}
-        onSort={onSort}
-        sortBy={sortBy}
-      >
-        Games
-      </SortableHeader>
-      <SortableHeader
-        column="facilitator"
-        direction={sortDirection}
-        onSort={onSort}
-        sortBy={sortBy}
-      >
-        Facilitator (non-player)
-      </SortableHeader>
-      <SortableHeader
-        column="waitList"
-        direction={sortDirection}
-        onSort={onSort}
-        sortBy={sortBy}
-      >
-        Wait Listed
-      </SortableHeader>
-    </tr>
-  </thead>
-);
-
-const AttendeesBody = ({ attendees }: AttendeesBodyProps) => (
-  <tbody>
-    {attendees.map(({ attendee, events, facilitator, waitList }) => (
-      <tr key={attendee.id}>
-        <td>{attendee.name}</td>
-        <td>{events}</td>
-        <td>{facilitator}</td>
-        <td>{waitList}</td>
-      </tr>
-    ))}
-  </tbody>
-);
 
 export const Attendees = () => {
   const [sortBy, setSortBy] = useState<AttendeesSortColumn>("name");
