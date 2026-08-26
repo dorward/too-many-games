@@ -13,7 +13,7 @@ interface DayOfWeekCellProps {
 
 export const DayOfWeekCell = ({ day, rowSpan }: DayOfWeekCellProps) => {
   const { dayOfWeek } = slotData(day);
-  const dayIndex = Math.floor(new Date(`${day}T00:00:00`).getTime() / MS_PER_DAY);
+  const dayIndex = Math.floor(Date.parse(`${day}T00:00:00Z`) / MS_PER_DAY);
   const dayParity = dayIndex % 2 === 0 ? "even" : "odd";
   return (
     <td rowSpan={rowSpan} className={`dayOfWeek ${dayParity}`}>
