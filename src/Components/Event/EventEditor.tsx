@@ -1,9 +1,9 @@
 import { useCallback, useContext, useState } from "react";
 import { TooManyGamesContext } from "../../context/TooManyGamesContext";
 import type { Event } from "../../types";
-import { FaCheck } from "react-icons/fa";
 import { SlotEditor } from "./SlotEditor";
 import { LocationEditor } from "./LocationEditor";
+import { EditorActions } from "./EditorActions";
 
 interface EventEditorProps {
   event: Event;
@@ -17,20 +17,24 @@ export const EventEditor = ({ event, closeEditor }: EventEditorProps) => {
   const [draftSlot, setDraftSlot] = useState<string | undefined>(event.startSlot);
   const [draftLocation, setDraftLocation] = useState<string | undefined>(event.location);
 
-  const onSave = useCallback(() => {
-    if (!context) {
-      throw new Error("Context missing");
-    }
-    context.updateEvent(event.id, { location: draftLocation, startSlot: draftSlot });
-    closeEditor();
-  }, [event.id, context, draftSlot, draftLocation, closeEditor]);
+  const onSave = useCallback<React.SubmitEventHandler<HTMLFormElement>>(
+    (submitEvent) => {
+      submitEvent.preventDefault();
+      if (!context) {
+        throw new Error("Context missing");
+      }
+      context.updateEvent(event.id, { location: draftLocation, startSlot: draftSlot });
+      closeEditor();
+    },
+    [event.id, context, draftSlot, draftLocation, closeEditor],
+  );
 
   if (!context?.data) {
     return <div>loading</div>;
   }
 
   return (
-    <div className="eventEditor">
+    <form className="eventEditor" onSubmit={onSave}>
       <SlotEditor
         dates={context.data.dates}
         eventLength={event.length}
@@ -42,11 +46,7 @@ export const EventEditor = ({ event, closeEditor }: EventEditorProps) => {
         locations={context.data.locations}
         setLocation={setDraftLocation}
       />
-      <button aria-label="Save" title="Save" onClick={onSave}>
-        <FaCheck />
-      </button>
-    </div>
+      <EditorActions closeEditor={closeEditor} />
+    </form>
   );
 };
-
-//

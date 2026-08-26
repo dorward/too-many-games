@@ -1,0 +1,21 @@
+.modal-actions {
+  display: flex;
+  gap: var(--default-padding);
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.modal-close-button {
+  background-color: var(--color-primary-subtle);
+  border-color: var(--color-border-elevated);
+  color: var(--color-text-subtle);
+}
+
+.modal-close-button:hover {
+  background-color: var(--color-accent-subtle);
+  color: var(--color-text-default);
+}
+
+.modal-close-button:active {
+  background-color: var(--color-bg-elevated);
+}

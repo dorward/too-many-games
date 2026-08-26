@@ -26,6 +26,25 @@
   font-weight: 700;
 }
 
+.eventEditor {
+  display: grid;
+  gap: var(--default-padding);
+  width: min(28rem, 80vw);
+
+  label {
+    align-items: center;
+    display: grid;
+    gap: var(--default-padding);
+    grid-template-columns: 8ch minmax(0, 1fr);
+  }
+
+  select {
+    box-sizing: border-box;
+    min-width: 0;
+    width: 100%;
+  }
+}
+
 @media print {
   .editButton {
     display: none;

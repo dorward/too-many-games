@@ -1,4 +1,5 @@
 import { type ReactNode, useEffect, useRef } from "react";
+import "./modal.css";
 
 interface ModalProps {
   isOpen: boolean;
@@ -42,9 +43,6 @@ export const Modal = ({ isOpen, onClose, children, title }: ModalProps) => {
     <dialog ref={dialogRef} className="modal">
       {title !== undefined && <h2>{title}</h2>}
       {children}
-      <button onClick={onClose} aria-label="Close">
-        ×
-      </button>
     </dialog>
   );
 };
