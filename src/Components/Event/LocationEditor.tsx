@@ -2,20 +2,20 @@ import { useCallback, useMemo } from "react";
 import type { AppData, Event } from "../../types";
 
 interface LocationEditorProps {
+  location: Event["location"];
   locations: AppData["locations"];
-  event: Event;
   setLocation: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
-export const LocationEditor = ({ locations, event, setLocation }: LocationEditorProps) => {
+export const LocationEditor = ({ location, locations, setLocation }: LocationEditorProps) => {
   const options = useMemo(
-    () => locations.map((location) => ({ label: location.name, value: location.id })),
+    () => locations.map((option) => ({ label: option.name, value: option.id })),
     [locations],
   );
 
   const onChange = useCallback<React.ChangeEventHandler<HTMLSelectElement, HTMLSelectElement>>(
     (e) => {
-      setLocation(e.currentTarget.value);
+      setLocation(e.currentTarget.value || undefined);
     },
     [setLocation],
   );
@@ -23,7 +23,8 @@ export const LocationEditor = ({ locations, event, setLocation }: LocationEditor
   return (
     <label>
       Location{" "}
-      <select value={event.location} onChange={onChange}>
+      <select value={location ?? ""} onChange={onChange}>
+        <option value="">Unscheduled</option>
         {options?.map(({ value, label }) => (
           <option key={value} value={value} label={label} />
         ))}

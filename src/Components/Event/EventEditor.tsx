@@ -31,10 +31,15 @@ export const EventEditor = ({ event, closeEditor }: EventEditorProps) => {
 
   return (
     <div className="eventEditor">
-      <SlotEditor dates={context.data.dates} event={event} setSlot={setDraftSlot} />
+      <SlotEditor
+        dates={context.data.dates}
+        eventLength={event.length}
+        setSlot={setDraftSlot}
+        slot={draftSlot}
+      />
       <LocationEditor
+        location={draftLocation}
         locations={context.data.locations}
-        event={event}
         setLocation={setDraftLocation}
       />
       <button aria-label="Save" title="Save" onClick={onSave}>
