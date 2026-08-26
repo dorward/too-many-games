@@ -9,7 +9,7 @@ import { useUploadData } from "../UploadData/useUploadData";
 import { Schedules } from "../EventList/Schedules/Schedules";
 import { SignupSheets } from "../SignupSheets/SignupSheets";
 
-export const Viewer = () => {
+export const Dashboard = () => {
   const context = useTooManyGamesData();
   const [view, setView] = useState<View>("event-list");
   const uploadData = useUploadData();

@@ -1,6 +1,6 @@
 import type { Event } from "../../types";
 import type { SchedulingErrors } from "../../scheduler/getSchedulingErrors";
-import { EventComponent } from "../EventComponent/EventComponent";
+import { EventCard } from "../EventCard/EventCard";
 
 interface UnscheduledEventsProps {
   schedulingErrors: SchedulingErrors;
@@ -21,7 +21,7 @@ export const UnscheduledEvents = ({
       <ul className="unscheduled">
         {unscheduled.map((event) => (
           <li key={event.id}>
-            <EventComponent event={event} schedulingError={schedulingErrors.get(event.id)} />
+            <EventCard event={event} schedulingError={schedulingErrors.get(event.id)} />
           </li>
         ))}
       </ul>

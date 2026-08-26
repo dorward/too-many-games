@@ -1,6 +1,6 @@
 import type { Event } from "../../types";
 import type { SchedulingError } from "../../scheduler/getSchedulingErrors";
-import { EventComponent } from "../EventComponent/EventComponent";
+import { EventCard } from "../EventCard/EventCard";
 
 interface EventCellProps {
   event: Event;
@@ -9,6 +9,6 @@ interface EventCellProps {
 
 export const EventCell = ({ event, schedulingError }: EventCellProps) => (
   <td colSpan={event.length}>
-    <EventComponent event={event} schedulingError={schedulingError} />
+    <EventCard event={event} schedulingError={schedulingError} />
   </td>
 );

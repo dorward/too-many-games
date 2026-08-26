@@ -1,11 +1,11 @@
 import { UploadData } from "./Components/UploadData/UploadData";
-import { Viewer } from "./Components/Viewer/Viewer";
+import { Dashboard } from "./Components/Dashboard/Dashboard";
 import { useTooManyGamesData } from "./context/useTooManyGamesData";
 
 export const App = () => {
   const context = useTooManyGamesData();
   if (context.data) {
-    return <Viewer />;
+    return <Dashboard />;
   }
 
   return <UploadData />;

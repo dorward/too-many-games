@@ -14,7 +14,7 @@ interface EventProps {
   schedulingError?: SchedulingError;
 }
 
-export const EventComponent = ({ event, schedulingError }: EventProps) => {
+export const EventCard = ({ event, schedulingError }: EventProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = useCallback(() => {
     setIsOpen(false);
