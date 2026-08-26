@@ -3,7 +3,7 @@
   width: 100%;
 
   .event-list-event {
-    width: 55%;
+    width: auto;
   }
 
   .event-list-players,
@@ -12,7 +12,8 @@
     text-align: center;
   }
 
-  .event-list-scheduled {
+  .event-list-scheduled,
+  .event-list-location {
     width: 22ch;
   }
 }

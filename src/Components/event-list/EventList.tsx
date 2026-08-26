@@ -2,12 +2,24 @@ import { useState } from "react";
 import { useTooManyGamesData } from "../../context/useTooManyGamesData";
 import { describeSchedule } from "../../scheduler/describeSchedule";
 import { eventHasParticipant } from "../../util/eventHasParticipant";
-import type { Event } from "../../types";
+import type { Event, Location } from "../../types";
 import { SortableHeader } from "../sortable-table/SortableHeader";
 import { getNextSortDirection, type SortDirection, sortDirections } from "../sortable-table/sortDirection";
 import "./event-list.css";
 
-export type EventListSortColumn = "event" | "maxSeats" | "players" | "scheduled";
+export type EventListSortColumn = "event" | "location" | "maxSeats" | "players" | "scheduled";
+
+const eventListColumns: {
+  className: string;
+  column: EventListSortColumn;
+  label: string;
+}[] = [
+  { className: "event-list-event", column: "event", label: "Event" },
+  { className: "event-list-players", column: "players", label: "Players" },
+  { className: "event-list-max-seats", column: "maxSeats", label: "Max Seats" },
+  { className: "event-list-scheduled", column: "scheduled", label: "Scheduled" },
+  { className: "event-list-location", column: "location", label: "Location" },
+];
 
 interface EventListProps {
   participantFilter: string;
@@ -22,17 +34,33 @@ interface EventListHeaderProps {
 
 interface EventListBodyProps {
   events: Event[];
+  locationNamesById: Map<Location["id"], Location["name"]>;
 }
 
 const compareByName = (a: Event, b: Event) => a.name.localeCompare(b.name);
+const getLocationName = (event: Event, locationNamesById: Map<string, string>) =>
+  locationNamesById.get(event.location ?? "") ?? "Unscheduled";
 
-const sortEvents = (events: Event[], sortBy: EventListSortColumn, direction: SortDirection) =>
+const sortEvents = (
+  events: Event[],
+  sortBy: EventListSortColumn,
+  direction: SortDirection,
+  locationNamesById: Map<string, string>,
+) =>
   events.toSorted((a, b) => {
     const directionModifier = sortDirections[direction];
 
     if (sortBy === "scheduled") {
       return directionModifier * (
         (a.startSlot ?? "").localeCompare(b.startSlot ?? "") || a.name.localeCompare(b.name)
+      );
+    }
+
+    if (sortBy === "location") {
+      return directionModifier * (
+        getLocationName(a, locationNamesById).localeCompare(
+          getLocationName(b, locationNamesById),
+        ) || compareByName(a, b)
       );
     }
 
@@ -50,47 +78,23 @@ const sortEvents = (events: Event[], sortBy: EventListSortColumn, direction: Sor
 const EventListHeader = ({ onSort, sortBy, sortDirection }: EventListHeaderProps) => (
   <thead>
     <tr>
-      <SortableHeader
-        className="event-list-event"
-        column="event"
-        direction={sortDirection}
-        onSort={onSort}
-        sortBy={sortBy}
-      >
-        Event
-      </SortableHeader>
-      <SortableHeader
-        className="event-list-players"
-        column="players"
-        direction={sortDirection}
-        onSort={onSort}
-        sortBy={sortBy}
-      >
-        Players
-      </SortableHeader>
-      <SortableHeader
-        className="event-list-max-seats"
-        column="maxSeats"
-        direction={sortDirection}
-        onSort={onSort}
-        sortBy={sortBy}
-      >
-        Max Seats
-      </SortableHeader>
-      <SortableHeader
-        className="event-list-scheduled"
-        column="scheduled"
-        direction={sortDirection}
-        onSort={onSort}
-        sortBy={sortBy}
-      >
-        Scheduled
-      </SortableHeader>
+      {eventListColumns.map(({ className, column, label }) => (
+        <SortableHeader
+          className={className}
+          column={column}
+          direction={sortDirection}
+          key={column}
+          onSort={onSort}
+          sortBy={sortBy}
+        >
+          {label}
+        </SortableHeader>
+      ))}
     </tr>
   </thead>
 );
 
-const EventListBody = ({ events }: EventListBodyProps) => (
+const EventListBody = ({ events, locationNamesById }: EventListBodyProps) => (
   <tbody>
     {events.map((event) => (
       <tr key={event.id}>
@@ -98,6 +102,7 @@ const EventListBody = ({ events }: EventListBodyProps) => (
         <td className="event-list-players">{event.players.length}</td>
         <td className="event-list-max-seats">{event.playerCount.max}</td>
         <td className="event-list-scheduled">{describeSchedule(event)}</td>
+        <td className="event-list-location">{getLocationName(event, locationNamesById)}</td>
       </tr>
     ))}
   </tbody>
@@ -115,7 +120,8 @@ export const EventList = ({ participantFilter, sortBy = "event" }: EventListProp
     participantFilter === ""
       ? data.events
       : data.events.filter((event) => eventHasParticipant(event, participantFilter));
-  const sortedEvents = sortEvents(events, currentSortBy, sortDirection);
+  const locationNamesById = new Map(data.locations.map(({ id, name }) => [id, name]));
+  const sortedEvents = sortEvents(events, currentSortBy, sortDirection, locationNamesById);
   const onSort = (column: EventListSortColumn) => {
     setSortDirection(getNextSortDirection(currentSortBy, column, sortDirection));
     setCurrentSortBy(column);
@@ -124,13 +130,12 @@ export const EventList = ({ participantFilter, sortBy = "event" }: EventListProp
   return (
     <table className="event-list">
       <colgroup>
-        <col className="event-list-event" />
-        <col className="event-list-players" />
-        <col className="event-list-max-seats" />
-        <col className="event-list-scheduled" />
+        {eventListColumns.map(({ className, column }) => (
+          <col className={className} key={column} />
+        ))}
       </colgroup>
       <EventListHeader onSort={onSort} sortBy={currentSortBy} sortDirection={sortDirection} />
-      <EventListBody events={sortedEvents} />
+      <EventListBody events={sortedEvents} locationNamesById={locationNamesById} />
     </table>
   );
 };
