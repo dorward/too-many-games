@@ -4,10 +4,12 @@ import type { Attendee, Event } from "../../types";
 import "./playerList.css";
 
 interface PlayerListProps {
+  additionalWaitListSlots?: number;
   errorPlayerIds?: Set<string>;
   facilitatorId: string;
   playerCount: Event["playerCount"];
   playerIds: string[];
+  vertical?: boolean;
   waitListIds: string[];
 }
 
@@ -44,15 +46,34 @@ const getPlayerLists = (
   };
 };
 
+interface EmptyPlayerSlotsProps {
+  count: number;
+  playerCount: Event["playerCount"];
+  startIndex: number;
+}
+
+const EmptyPlayerSlots = ({ count, playerCount, startIndex }: EmptyPlayerSlotsProps) =>
+  Array.from({ length: count }, (_, offset) => {
+    const index = startIndex + offset;
+    return (
+      <li
+        aria-hidden="true"
+        className={getCountClassName(index, playerCount)}
+        key={`empty-player-${index}`}
+      />
+    );
+  });
+
 export const PlayerList = ({
+  additionalWaitListSlots = 0,
   errorPlayerIds,
   facilitatorId,
   playerCount,
   playerIds,
+  vertical = false,
   waitListIds,
 }: PlayerListProps) => {
   const context = useContext(TooManyGamesContext);
-
   const { players, waitList } = useMemo(
     () => getPlayerLists(context?.data?.attendees ?? [], facilitatorId, playerIds, waitListIds),
     [context?.data?.attendees, facilitatorId, playerIds, waitListIds],
@@ -63,7 +84,7 @@ export const PlayerList = ({
   const emptyPlayerCount = Math.max(0, playerCount.max + 1 - countIndexOffset - players.length);
 
   return (
-    <ul className="playerList">
+    <ul className={`playerList${vertical ? " vertical" : ""}`}>
       {players.map(({ name, id }, index) => (
         <li
           className={`${getCountClassName(index + countIndexOffset, playerCount)}${id === facilitatorId ? ` facilitator${facilitatorIsPlaying ? "" : " non-playing-facilitator"}` : ""}${errorPlayerIds?.has(id) ? " error" : ""}`}
@@ -72,16 +93,11 @@ export const PlayerList = ({
           {name}
         </li>
       ))}
-      {Array.from({ length: emptyPlayerCount }, (_, emptyIndex) => {
-        const index = players.length + emptyIndex + countIndexOffset;
-        return (
-          <li
-            aria-hidden="true"
-            className={getCountClassName(index, playerCount)}
-            key={`empty-player-${index}`}
-          />
-        );
-      })}
+      <EmptyPlayerSlots
+        count={emptyPlayerCount}
+        playerCount={playerCount}
+        startIndex={players.length + countIndexOffset}
+      />
       {waitList.map(({ name, id }, waitListIndex) => (
         <li
           className={`${getCountClassName(playerCount.max + 1 + waitListIndex, playerCount)}${errorPlayerIds?.has(id) ? " error" : ""}`}
@@ -90,6 +106,11 @@ export const PlayerList = ({
           {name}
         </li>
       ))}
+      <EmptyPlayerSlots
+        count={additionalWaitListSlots}
+        playerCount={playerCount}
+        startIndex={playerCount.max + 1 + waitList.length}
+      />
     </ul>
   );
 };

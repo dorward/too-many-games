@@ -17,6 +17,10 @@ const pages = [
     label: "Event Grid",
     name: "event-grid",
   },
+  {
+    label: "Signup Sheets",
+    name: "signup-sheets",
+  },
 ] as const;
 
 type NavButtonProps = React.PropsWithChildren<{

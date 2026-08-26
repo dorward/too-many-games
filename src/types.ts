@@ -122,8 +122,8 @@ export interface ContextValue {
   updateEvent: (eventId: string, update: Partial<Event>) => void;
 }
 
-export type View = "attendees" | "event-list" | "event-grid" | "schedules";
-const views: View[] = ["attendees", "event-list", "event-grid", "schedules"];
+export type View = "attendees" | "event-list" | "event-grid" | "schedules" | "signup-sheets";
+const views: View[] = ["attendees", "event-list", "event-grid", "schedules", "signup-sheets"];
 export const isView = (potential: string): potential is View =>
   (views as readonly string[]).includes(potential);
 

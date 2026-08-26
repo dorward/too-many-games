@@ -6,6 +6,16 @@
   display: flex;
   flex-wrap: wrap;
 
+  &.vertical {
+    flex-direction: column;
+    flex-wrap: nowrap;
+
+    li {
+      box-sizing: border-box;
+      width: 100%;
+    }
+  }
+
   li {
     border: 1px solid transparent;
     font-size: 0.8rem;
@@ -31,6 +41,7 @@
 
     &.facilitator {
       border-color: var(--color-border-elevated);
+      font-weight: 700;
     }
 
     &.non-playing-facilitator {

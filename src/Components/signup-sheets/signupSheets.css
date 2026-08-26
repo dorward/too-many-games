@@ -1,0 +1,71 @@
+.signup-sheets {
+  display: flex;
+  flex-direction: column;
+}
+
+.signup-sheet {
+  border-top: 1px solid var(--color-border-default);
+  break-inside: avoid;
+  padding: 1rem 0;
+
+  > header {
+    align-items: flex-start;
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+  }
+
+  .signup-sheet-details {
+    display: grid;
+    gap: 0.25rem;
+    text-align: right;
+  }
+
+  .signup-sheet-player-count {
+    display: flex;
+    gap: 0.75rem;
+    margin: 0;
+
+    > div {
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    dt {
+      color: var(--color-text-muted);
+    }
+
+    dd {
+      font-weight: 600;
+      margin: 0;
+    }
+  }
+
+  .signup-sheet-body {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .signup-sheet-notes {
+    display: grid;
+    gap: var(--default-padding);
+  }
+}
+
+@media (max-width: 600px) {
+  .signup-sheet {
+    > header {
+      flex-direction: column;
+    }
+
+    .signup-sheet-details {
+      text-align: left;
+    }
+  }
+}
+
+@media print {
+  .signup-sheet {
+    break-after: page;
+  }
+}
