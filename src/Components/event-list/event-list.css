@@ -1,0 +1,38 @@
+.event-list {
+  table-layout: fixed;
+  width: 100%;
+
+  .event-list-event {
+    width: 55%;
+  }
+
+  .event-list-players,
+  .event-list-max-seats {
+    width: 12ch;
+    text-align: center;
+  }
+
+  .event-list-scheduled {
+    width: 22ch;
+  }
+}
+
+.schedule {
+  break-inside: avoid;
+  break-after: page;
+
+  header {
+    display: flex;
+    justify-content: space-between;
+
+    button.no-events {
+      display: none;
+    }
+  }
+}
+
+@media print {
+  .schedule button {
+    display: none;
+  }
+}

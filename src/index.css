@@ -114,21 +114,23 @@
   }
 }
 
-@media print {
-  :root {
-    background: none;
-  }
-}
-
 #root {
   width: 1126px;
+  padding: var(--default-padding);
   max-width: 100%;
   margin: 0 auto;
-  border-inline: 1px solid var(--color-border-default);
   min-height: 100svh;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  background: var(--color-bg-surface);
+}
+
+@media print {
+  :root,
+  #root {
+    background: none;
+  }
 }
 
 body {
@@ -143,7 +145,7 @@ h2 {
 }
 
 h1 {
-  font-size: 56px;
+  font-size: 58px;
   letter-spacing: -1.68px;
   margin: 32px 0;
   @media (max-width: 1024px) {
@@ -168,7 +170,6 @@ table {
   width: fit-content;
   margin: 1rem auto;
   border-collapse: separate;
-  border: solid 1px var(--color-border-default);
 
   th {
     border-radius: var(--border-radius);

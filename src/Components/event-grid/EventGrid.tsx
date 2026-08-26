@@ -3,11 +3,12 @@ import type { Event, OrganisedScheduleDays } from "../../types";
 import { useMemo } from "react";
 import { useTooManyGamesData } from "../../context/useTooManyGamesData";
 import { EventGridBody } from "./EventGridBody";
-import { EventComponent } from "../Event/Event";
+import { EventComponent } from "../event/Event";
 import {
   getSchedulingErrors,
   type SchedulingErrors,
 } from "../../scheduler/getSchedulingErrors";
+import { eventHasParticipant } from "../../util/eventHasParticipant";
 import "./eventGrid.css";
 
 const prepareEventsForRendering = (events: Event[]) => {
@@ -122,7 +123,11 @@ const UnscheduledEvents = ({
   );
 };
 
-export const EventGrid = () => {
+interface EventGridProps {
+  participantFilter: string;
+}
+
+export const EventGrid = ({ participantFilter }: EventGridProps) => {
   const { data } = useTooManyGamesData();
 
   if (!data) {
@@ -130,8 +135,12 @@ export const EventGrid = () => {
   }
 
   const { events } = data;
+  const filteredEvents =
+    participantFilter === ""
+      ? events
+      : events.filter((event) => eventHasParticipant(event, participantFilter));
   const schedulingErrors = useMemo(() => getSchedulingErrors(events), [events]);
-  const { schedule, unscheduled } = prepareEventsForRendering(events);
+  const { schedule, unscheduled } = prepareEventsForRendering(filteredEvents);
   const maxGamesPerDay = getMaxGamesPerDay(schedule);
 
   return (

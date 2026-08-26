@@ -3,9 +3,9 @@ import type { SchedulingError } from "../../scheduler/getSchedulingErrors";
 import { useCallback, useState } from "react";
 import { Modal } from "../event-grid/Modal";
 import { FaRegEdit } from "react-icons/fa";
-import { PlayerList } from "../PlayerList/PlayerList";
-import { ScheduledTime } from "../ScheduledTime/ScheduledTime";
-import { Location } from "../Location/Location";
+import { PlayerList } from "../player-list/PlayerList";
+import { ScheduledTime } from "../scheduled-time/ScheduledTime";
+import { Location } from "../location/Location";
 import { EventEditor } from "./EventEditor";
 import "./event.css";
 

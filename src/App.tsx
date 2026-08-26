@@ -1,4 +1,4 @@
-import { UploadData } from "./Components/uploadData/UploadData";
+import { UploadData } from "./Components/upload-data/UploadData";
 import { Viewer } from "./Components/viewer/Viewer";
 import { useTooManyGamesData } from "./context/useTooManyGamesData";
 

@@ -6,10 +6,19 @@
     flex: 1 1 auto;
     text-align: left;
   }
+  .buttons {
+    display: flex;
+    flex-direction: column;
+    gap: var(--default-padding);
+  }
   .button-group {
     display: flex;
     align-items: center;
     gap: var(--default-padding);
+
+    label {
+      margin-left: auto;
+    }
   }
   button {
     height: 40px;

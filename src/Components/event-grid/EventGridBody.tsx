@@ -1,7 +1,7 @@
 import type { OrganisedScheduleDays } from "../../types";
 import type { SchedulingErrors } from "../../scheduler/getSchedulingErrors";
 import { DayOfWeekCell } from "./DayOfWeekCell";
-import { EventCell } from "../Event/Event";
+import { EventCell } from "../event/Event";
 
 interface EventGridBodyProps {
   schedule: OrganisedScheduleDays;
@@ -9,7 +9,11 @@ interface EventGridBodyProps {
   schedulingErrors: SchedulingErrors;
 }
 
-export const EventGridBody = ({ schedule, maxEventsPerDay, schedulingErrors }: EventGridBodyProps) =>
+export const EventGridBody = ({
+  schedule,
+  maxEventsPerDay,
+  schedulingErrors,
+}: EventGridBodyProps) =>
   Object.entries(schedule)
     .map(([date, slots]) => {
       const max = maxEventsPerDay[date];

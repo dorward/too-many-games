@@ -6,6 +6,10 @@ const pages = [
     name: "attendees",
   },
   {
+    label: "Personalised Schedules",
+    name: "schedules",
+  },
+  {
     label: "Event List",
     name: "event-list",
   },
