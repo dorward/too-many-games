@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { useTooManyGamesData } from "../../context/useTooManyGamesData";
 import { getSchedulingErrors } from "../../scheduler/getSchedulingErrors";
 import { eventHasParticipant } from "../../util/eventHasParticipant";
+import { isScheduled } from "../../util/isScheduled";
 import { EventGridTable } from "./EventGridTable";
 import { UnscheduledEvents } from "./UnscheduledEvents";
 import "./eventGrid.css";
@@ -15,11 +16,11 @@ const prepareEventsForRendering = (events: Event[]) => {
   events
     .toSorted((a, b) => (a.startSlot ?? "").localeCompare(b.startSlot ?? ""))
     .forEach((event) => {
-      const { startSlot, length } = event;
-      if (startSlot === undefined) {
+      if (!isScheduled(event)) {
         unscheduled.push(event);
         return;
       }
+      const { startSlot, length } = event;
       const [year, month, dayOfMonth, slotNumberStr] = startSlot.split("-");
       const day = `${year}-${month}-${dayOfMonth}`;
       const slotsToday = (schedule[day] ??= {});

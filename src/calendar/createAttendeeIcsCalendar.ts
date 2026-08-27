@@ -1,5 +1,6 @@
 import type { Attendee, Event, Location } from "../types";
 import { eventHasParticipant } from "../util/eventHasParticipant";
+import { isScheduled } from "../util/isScheduled";
 
 const CRLF = "\r\n";
 const DEFAULT_EVENT_LENGTH = 1;
@@ -97,7 +98,7 @@ export const createAttendeeIcsCalendar = (
   const dtstamp = formatUtcDateTime(new Date());
   const calendarName = `${attendee.name} Too Many Games Schedule`;
   const eventLines = events
-    .filter((event) => eventHasParticipant(event, attendee.id) && event.startSlot !== undefined)
+    .filter((event) => eventHasParticipant(event, attendee.id) && isScheduled(event))
     .flatMap((event) => createEventLines(event, attendee, locations, dtstamp));
 
   return [

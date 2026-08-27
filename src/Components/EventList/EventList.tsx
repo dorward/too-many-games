@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTooManyGamesData } from "../../context/useTooManyGamesData";
 import { eventHasParticipant } from "../../util/eventHasParticipant";
+import { isScheduled } from "../../util/isScheduled";
 import type { Event } from "../../types";
 import { getNextSortDirection, type SortDirection, sortDirections } from "../SortableHeader/sortDirection";
 import { EventListBody } from "./EventListBody";
@@ -28,7 +29,9 @@ const sortEvents = (
 
     if (sortBy === "scheduled") {
       return directionModifier * (
-        (a.startSlot ?? "").localeCompare(b.startSlot ?? "") || a.name.localeCompare(b.name)
+        (isScheduled(a) ? a.startSlot : "").localeCompare(
+          isScheduled(b) ? b.startSlot : "",
+        ) || a.name.localeCompare(b.name)
       );
     }
 

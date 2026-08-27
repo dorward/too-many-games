@@ -1,7 +1,8 @@
 import type { Event } from "../types";
+import { isScheduled } from "../util/isScheduled";
 
 export const describeSchedule = (event: Event): string => {
-  if (event.startSlot === undefined) {
+  if (!isScheduled(event)) {
     return "Unscheduled";
   }
   const [year, month, dayOfMonth, slotNumber] = event.startSlot.split("-");

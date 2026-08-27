@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { FaCalendarCheck } from "react-icons/fa";
 import { useTooManyGamesData } from "../../../context/useTooManyGamesData";
 import { getSchedulingErrors } from "../../../scheduler/getSchedulingErrors";
+import { isScheduled } from "../../../util/isScheduled";
 import { ScheduleDialog } from "./ScheduleDialog/ScheduleDialog";
 import type { ScheduleDialogState } from "./ScheduleDialog/scheduleDialogTypes";
 
@@ -70,7 +71,7 @@ export const ScheduleControl = ({ onSchedule }: ScheduleControlProps) => {
     setIsOpen,
   );
   const allEventsScheduled = useMemo(
-    () => data !== null && data.events.every(({ startSlot }) => startSlot !== undefined),
+    () => data !== null && data.events.every(isScheduled),
     [data],
   );
   const hasConflicts = useMemo(
