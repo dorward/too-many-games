@@ -5,23 +5,22 @@ import type { AppData, Event } from "../types";
 export const TooManyGamesProvider = ({ children }: { children: ReactNode }) => {
   const [data, setData] = useState<AppData | null>(null);
 
-  const updateEvent = useCallback(
-    (eventId: string, update: Partial<Event>) => {
-      if (!data?.events) {
-        return;
+  const updateEvent = useCallback((eventId: string, update: Partial<Event>) => {
+    setData((current) => {
+      if (current === null) {
+        return current;
       }
 
-      const events = data.events.map((event) => {
+      const events = current.events.map((event) => {
         if (event.id !== eventId) {
           return event;
         }
         return { ...event, ...update };
       });
 
-      setData({ ...data, events });
-    },
-    [data],
-  );
+      return { ...current, events };
+    });
+  }, []);
 
   const value = useMemo(() => ({ data, setData, updateEvent }), [data, setData, updateEvent]);
 
