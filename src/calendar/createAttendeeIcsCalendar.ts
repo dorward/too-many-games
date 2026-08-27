@@ -21,7 +21,7 @@ const pad = (value: number) => value.toString().padStart(2, "0");
 const escapeText = (value: string) =>
   value
     .replaceAll("\\", "\\\\")
-    .replaceAll("\n", "\\n")
+    .replaceAll(/\r\n|\r|\n/gu, "\\n")
     .replaceAll(";", "\\;")
     .replaceAll(",", "\\,");
 
