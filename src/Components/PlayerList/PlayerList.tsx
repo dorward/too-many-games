@@ -35,6 +35,25 @@ const getPlayerLists = (
   };
 };
 
+const getCapacityIndexes = (
+  players: Attendee[],
+  facilitatorId: string,
+  facilitatorIsPlaying: boolean,
+) => {
+  const indexes = new Map<string, number>();
+  players.forEach(({ id }) => {
+    if (id !== facilitatorId || facilitatorIsPlaying) {
+      indexes.set(id, indexes.size + 1);
+    }
+  });
+  return indexes;
+};
+
+const getCapacityClassName = (
+  capacityIndex: number | undefined,
+  playerCount: Event["playerCount"],
+) => (capacityIndex === undefined ? "" : getCountClassName(capacityIndex, playerCount));
+
 export const PlayerList = ({
   additionalWaitListSlots = 0,
   errorPlayerIds,
@@ -51,23 +70,22 @@ export const PlayerList = ({
   );
 
   const facilitatorIsPlaying = playerIds.includes(facilitatorId);
-  const countIndexOffset = facilitatorIsPlaying ? 1 : 0;
-  const emptyPlayerCount = Math.max(0, playerCount.max + 1 - countIndexOffset - players.length);
+  const capacityIndexes = getCapacityIndexes(players, facilitatorId, facilitatorIsPlaying);
 
   return (
     <ul className={`playerList${vertical ? " vertical" : ""}`}>
-      {players.map(({ name, id }, index) => (
+      {players.map(({ name, id }) => (
         <li
-          className={`${getCountClassName(index + countIndexOffset, playerCount)}${id === facilitatorId ? ` facilitator${facilitatorIsPlaying ? "" : " non-playing-facilitator"}` : ""}${errorPlayerIds?.has(id) ? " error" : ""}`}
+          className={`${getCapacityClassName(capacityIndexes.get(id), playerCount)}${id === facilitatorId ? ` facilitator${facilitatorIsPlaying ? "" : " non-playing-facilitator"}` : ""}${errorPlayerIds?.has(id) ? " error" : ""}`}
           key={id}
         >
           {name}
         </li>
       ))}
       <EmptyPlayerSlots
-        count={emptyPlayerCount}
+        count={Math.max(0, playerCount.max - capacityIndexes.size)}
         playerCount={playerCount}
-        startIndex={players.length + countIndexOffset}
+        startIndex={capacityIndexes.size + 1}
       />
       {waitList.map(({ name, id }, waitListIndex) => (
         <li
