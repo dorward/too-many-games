@@ -5,6 +5,8 @@ import { isScheduled } from "../util/isScheduled";
 const CRLF = "\r\n";
 const DEFAULT_EVENT_LENGTH = 1;
 const LAST_SLOT = 3;
+const MAX_CONTENT_LINE_OCTETS = 75;
+const textEncoder = new TextEncoder();
 const SLOT_START_HOURS: Record<string, number> = {
   "1": 9,
   "2": 13,
@@ -24,6 +26,27 @@ const escapeText = (value: string) =>
     .replaceAll(/\r\n|\r|\n/gu, "\\n")
     .replaceAll(";", "\\;")
     .replaceAll(",", "\\,");
+
+const foldContentLine = (line: string) => {
+  const physicalLines: string[] = [];
+  let currentLine = "";
+  let currentLineOctets = 0;
+
+  for (const character of line) {
+    const characterOctets = textEncoder.encode(character).length;
+    if (currentLineOctets + characterOctets > MAX_CONTENT_LINE_OCTETS) {
+      physicalLines.push(currentLine);
+      currentLine = ` ${character}`;
+      currentLineOctets = 1 + characterOctets;
+    } else {
+      currentLine += character;
+      currentLineOctets += characterOctets;
+    }
+  }
+
+  physicalLines.push(currentLine);
+  return physicalLines.join(CRLF);
+};
 
 const formatDateTime = (year: string, month: string, day: string, hour: number) =>
   `${year}${month}${day}T${pad(hour)}0000`;
@@ -79,7 +102,7 @@ const createEventLines = (
   const location = getLocationName(locations, event);
   return [
     "BEGIN:VEVENT",
-    `UID:${event.id}-${attendee.id}@too-many-games`,
+    `UID:${escapeText(`${event.id}-${attendee.id}@too-many-games`)}`,
     `DTSTAMP:${dtstamp}`,
     `DTSTART:${dateTimes.start}`,
     `DTEND:${dateTimes.end}`,
@@ -111,5 +134,7 @@ export const createAttendeeIcsCalendar = (
     ...eventLines,
     "END:VCALENDAR",
     "",
-  ].join(CRLF);
+  ]
+    .map(foldContentLine)
+    .join(CRLF);
 };
