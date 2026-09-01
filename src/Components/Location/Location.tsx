@@ -10,7 +10,15 @@ interface LocationProps {
 export const Location = ({ event, hasError = false }: LocationProps) => {
   const context = useContext(tooManyGamesContext);
   const locations = context?.data?.locations;
-  const className = hasError ? "location error" : "location";
+  const className = [
+    "location",
+    hasError && "error",
+    event.location !== undefined &&
+      !event.preferredSpace.includes(event.location) &&
+      "not-preferred-location",
+  ]
+    .filter(Boolean)
+    .join(" ");
   if (!locations) {
     return <div className={className} />;
   }

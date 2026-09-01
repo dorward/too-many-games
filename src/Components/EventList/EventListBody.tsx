@@ -9,14 +9,23 @@ interface EventListBodyProps {
 
 export const EventListBody = ({ events, locationNamesById }: EventListBodyProps) => (
   <tbody>
-    {events.map((event) => (
-      <tr key={event.id}>
-        <td className="event-list-event">{event.name}</td>
-        <td className="event-list-players">{event.players.length}</td>
-        <td className="event-list-max-seats">{event.playerCount.max}</td>
-        <td className="event-list-scheduled">{describeSchedule(event)}</td>
-        <td className="event-list-location">{getLocationName(event, locationNamesById)}</td>
-      </tr>
-    ))}
+    {events.map((event) => {
+      const isNotPreferredLocation =
+        event.location !== undefined && !event.preferredSpace.includes(event.location);
+
+      return (
+        <tr key={event.id}>
+          <td className="event-list-event">{event.name}</td>
+          <td className="event-list-players">{event.players.length}</td>
+          <td className="event-list-max-seats">{event.playerCount.max}</td>
+          <td className="event-list-scheduled">{describeSchedule(event)}</td>
+          <td
+            className={`event-list-location${isNotPreferredLocation ? " not-preferred-location" : ""}`}
+          >
+            {getLocationName(event, locationNamesById)}
+          </td>
+        </tr>
+      );
+    })}
   </tbody>
 );

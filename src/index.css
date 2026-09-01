@@ -170,6 +170,11 @@ p {
   margin: 0;
 }
 
+.not-preferred-location {
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
 table {
   width: fit-content;
   margin: 1rem auto;
