@@ -4,11 +4,16 @@ import "./uploadData.css";
 import { parseFile } from "../../data/parseFile";
 import { useTooManyGamesData } from "../../context/useTooManyGamesData";
 import { FileRejectionItems } from "./FileRejectionItems";
+import type { AppData } from "../../types";
 
 const getErrorMessage = (error: unknown) =>
   error instanceof Error ? error.message : "An unknown parsing error occurred";
 
-export const UploadData = () => {
+interface UploadDataProps {
+  onUpload?: (data: AppData) => void;
+}
+
+export const UploadData = ({ onUpload }: UploadDataProps = {}) => {
   const { setData } = useTooManyGamesData();
   const [parsingError, setParsingError] = useState<string | null>(null);
 
@@ -16,12 +21,12 @@ export const UploadData = () => {
     (acceptedFiles: File[]) => {
       setParsingError(null);
       void parseFile(acceptedFiles)
-        .then(setData)
+        .then(onUpload ?? setData)
         .catch((error: unknown) => {
           setParsingError(getErrorMessage(error));
         });
     },
-    [setData],
+    [onUpload, setData],
   );
 
   const { getRootProps, fileRejections, getInputProps, isDragActive } = useDropzone({

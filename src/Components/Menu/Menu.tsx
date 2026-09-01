@@ -1,18 +1,19 @@
 // oxlint-disable max-lines-per-function
-import { FaDownload, FaUpload } from "react-icons/fa";
+import { FaDownload } from "react-icons/fa";
 import "./menu.css";
-import { isView, type Attendee, type View } from "../../types";
+import { isView, type AppData, type Attendee, type View } from "../../types";
 import { Navigation } from "./Navigation/Navigation";
 import { Processing } from "./Processing";
 import { ParticipantFilter } from "./ParticipantFilter";
 import { useCallback } from "react";
 import { ScheduleControl } from "./ScheduleControl/ScheduleControl";
 import { ClearScheduleControl } from "./ClearScheduleControl/ClearScheduleControl";
+import { LoadDataControl } from "./LoadDataControl/LoadDataControl";
 
 interface MenuProps {
   countdown: null | number;
   onClearSchedule: () => void;
-  onLoad: () => void;
+  onLoad: (data: AppData) => void;
   onParticipantFilterChange: React.ChangeEventHandler<HTMLSelectElement>;
   onSave: () => void;
   onSchedule: () => Promise<boolean>;
@@ -55,9 +56,7 @@ export const Menu = ({
           <button aria-label="Save" title="Save" onClick={onSave}>
             <FaDownload />
           </button>
-          <button aria-label="Load" title="Load" onClick={onLoad}>
-            <FaUpload />
-          </button>
+          <LoadDataControl onLoad={onLoad} />
           <ScheduleControl onSchedule={onSchedule} />
           <ClearScheduleControl onClearSchedule={onClearSchedule} />
           <ParticipantFilter

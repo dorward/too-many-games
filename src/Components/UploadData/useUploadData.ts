@@ -1,7 +1,8 @@
 import { useMemo, useState, type Dispatch, type SetStateAction } from "react";
 import { autoSolve } from "../../scheduler/autoSolve";
 import { useTooManyGamesData } from "../../context/useTooManyGamesData";
-import type { Attendee, ContextValue, Event } from "../../types";
+import type { AppData, Attendee, ContextValue, Event } from "../../types";
+import { mergeUploadedData } from "../../data/mergeUploadedData";
 
 const downloadFile = (data: any) => {
   const json = JSON.stringify(data, null, 2);
@@ -25,7 +26,7 @@ const clearEventSchedule = (event: Event): Event => {
 
 interface UseUploadReturn {
   countdown: null | number;
-  onLoad: () => void;
+  onLoad: (data: AppData) => void;
   onSave: () => void;
   onSchedule: () => Promise<boolean>;
   onClearSchedule: () => void;
@@ -69,12 +70,6 @@ const clearSchedule = ({ data, setData }: ContextValue) => {
   });
 };
 
-const loadData = ({ setData }: ContextValue) => {
-  if (confirm("Discard all data and return to the load screen?")) {
-    setData(null);
-  }
-};
-
 const scheduleData = (
   context: ContextValue,
   setCountdown: Dispatch<SetStateAction<number | null>>,
@@ -110,8 +105,11 @@ export const useUploadData = (): UseUploadReturn => {
     onClearSchedule: () => {
       clearSchedule(context);
     },
-    onLoad: () => {
-      loadData(context);
+    onLoad: (uploadedData) => {
+      const nextData =
+        context.data === null ? uploadedData : mergeUploadedData(context.data, uploadedData);
+      context.setData(nextData);
+      setParticipantFilter("");
     },
     onParticipantFilterChange,
     onSave,
