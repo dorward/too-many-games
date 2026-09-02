@@ -1,0 +1,75 @@
+.room-map {
+  margin: 1rem 0;
+
+  canvas {
+    display: block;
+    height: auto;
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+.room-map-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+
+  h2 {
+    margin: 0;
+  }
+}
+
+.room-map-error {
+  background-color: var(--color-error-subtle);
+  border: 1px solid var(--color-error-default);
+  border-radius: var(--border-radius);
+  margin-bottom: 1rem;
+  padding: var(--default-padding);
+}
+
+.room-map-floor-lists {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.room-map-floor {
+  h3 {
+    margin: 0 0 0.75rem;
+  }
+}
+
+.room-map-room-list {
+  display: grid;
+  gap: 0.5rem 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.room-map-room {
+  align-content: start;
+  display: grid;
+  gap: 0.5rem;
+
+  h4,
+  p {
+    margin: 0;
+  }
+}
+
+@page {
+  size: portrait;
+}
+
+@media print {
+  .room-map-header button,
+  .room-map > [role="status"] {
+    display: none;
+  }
+  .room-map {
+    margin: 0;
+  }
+}

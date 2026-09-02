@@ -1,6 +1,6 @@
 import { getEventOccupiedSlotIds } from "../scheduler/getSchedulingErrors";
 import { generateSlotIds } from "../scheduler/generateSlotIds";
-import type { AppData, Event } from "../types";
+import type { AppData, Event, RoomAllocation } from "../types";
 import { validateAppDataSemantics } from "./validateAppDataSemantics";
 
 interface NamedItem {
@@ -88,6 +88,17 @@ const copyExistingSchedule = (
   return mergedEvent;
 };
 
+const remapRoomAllocationReferences = (
+  roomAllocations: RoomAllocation[],
+  attendeeIds: Map<string, string>,
+): RoomAllocation[] => {
+  const remapId = (id: string | null) => (id === null ? null : attendeeIds.get(id) ?? id);
+  return roomAllocations.map((room) => ({
+    ...room,
+    occupantIds: [remapId(room.occupantIds[0]), remapId(room.occupantIds[1])],
+  }));
+};
+
 export const mergeUploadedData = (currentData: AppData, uploadedData: AppData): AppData => {
   const reconciledAttendees = reconcileNamedItems(currentData.attendees, uploadedData.attendees);
   const reconciledLocations = reconcileNamedItems(currentData.locations, uploadedData.locations);
@@ -119,6 +130,10 @@ export const mergeUploadedData = (currentData: AppData, uploadedData: AppData): 
     attendees: reconciledAttendees.items,
     events,
     locations: reconciledLocations.items,
+    roomAllocations: remapRoomAllocationReferences(
+      uploadedData.roomAllocations,
+      reconciledAttendees.uploadedIdToReconciledId,
+    ),
   };
   validateAppDataSemantics(mergedData);
   return mergedData;

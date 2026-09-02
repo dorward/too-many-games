@@ -134,6 +134,8 @@
   :root,
   #root {
     background: none;
+    width: auto;
+    margin: auto;
   }
 }
 

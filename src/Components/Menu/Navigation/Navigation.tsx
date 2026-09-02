@@ -22,6 +22,10 @@ const pages = [
     label: "Signup Sheets",
     name: "signup-sheets",
   },
+  {
+    label: "Room Map",
+    name: "room-map",
+  },
 ] as const;
 
 interface NavigationProps {

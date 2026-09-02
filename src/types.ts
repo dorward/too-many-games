@@ -22,6 +22,22 @@ const locationSchema = {
   type: "object",
 } as const;
 
+const roomAllocationSchema = {
+  additionalProperties: false,
+  properties: {
+    layout: { enum: ["single", "twin", "double"] },
+    occupantIds: {
+      items: { anyOf: [{ type: "string" }, { type: "null" }] },
+      maxItems: 2,
+      minItems: 2,
+      type: "array",
+    },
+    roomNumber: { maximum: 17, minimum: 1, type: "integer" },
+  },
+  required: ["roomNumber", "layout", "occupantIds"],
+  type: "object",
+} as const;
+
 const eventSchema = {
   additionalProperties: false,
   properties: {
@@ -98,20 +114,33 @@ export const appDataSchema = {
       items: locationSchema,
       type: "array",
     },
+    roomAllocations: {
+      items: roomAllocationSchema,
+      type: "array",
+    },
   },
-  required: ["attendees", "locations", "events", "dates"],
+  required: ["attendees", "locations", "events", "dates", "roomAllocations"],
   type: "object",
 } as const;
 
 export type Attendee = FromSchema<typeof attendeeSchema>;
 export type Location = FromSchema<typeof locationSchema>;
 export type Event = FromSchema<typeof eventSchema>;
+export type BedLayout = "single" | "twin" | "double";
+// oxlint-disable-next-line no-magic-numbers
+export type RoomNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17;
+export interface RoomAllocation {
+  layout: BedLayout;
+  occupantIds: [string | null, string | null];
+  roomNumber: RoomNumber;
+}
 export interface Dates {
   start: Date;
   end: Date;
 }
-export type AppData = Omit<FromSchema<typeof appDataSchema>, "dates"> & {
+export type AppData = Omit<FromSchema<typeof appDataSchema>, "dates" | "roomAllocations"> & {
   dates: Dates;
+  roomAllocations: RoomAllocation[];
 };
 
 export type SlotId = Exclude<Event["startSlot"], undefined>;
@@ -122,8 +151,21 @@ export interface ContextValue {
   updateEvent: (eventId: string, update: Partial<Event>) => void;
 }
 
-export type View = "attendees" | "event-list" | "event-grid" | "schedules" | "signup-sheets";
-const views: View[] = ["attendees", "event-list", "event-grid", "schedules", "signup-sheets"];
+export type View =
+  | "attendees"
+  | "event-list"
+  | "event-grid"
+  | "room-map"
+  | "schedules"
+  | "signup-sheets";
+const views: View[] = [
+  "attendees",
+  "event-list",
+  "event-grid",
+  "room-map",
+  "schedules",
+  "signup-sheets",
+];
 export const isView = (potential: string): potential is View =>
   (views as readonly string[]).includes(potential);
 

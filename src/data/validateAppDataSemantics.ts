@@ -1,7 +1,7 @@
 import { SLOTS_PER_DAY } from "../consts";
 import { generateSlotIds } from "../scheduler/generateSlotIds";
 import { getEventOccupiedSlotIds } from "../scheduler/getSchedulingErrors";
-import type { AppData, Event } from "../types";
+import type { AppData, Event, RoomAllocation } from "../types";
 
 const invalidAppData = (message: string): never => {
   throw new Error(`Invalid data: ${message}`);
@@ -82,6 +82,39 @@ const validateEvent = (
   validateScheduledSlots(event, slotIds, label);
 };
 
+const validateRoomAllocations = (
+  roomAllocations: RoomAllocation[],
+  attendeeIds: Set<string>,
+) => {
+  const roomNumbers = new Set<number>();
+  const allocatedAttendeeIds = new Set<string>();
+
+  for (const room of roomAllocations) {
+    if (roomNumbers.has(room.roomNumber)) {
+      invalidAppData(`Room ${room.roomNumber} appears more than once`);
+    }
+    roomNumbers.add(room.roomNumber);
+
+    if (room.layout === "single" && room.occupantIds[1] !== null) {
+      invalidAppData(`Room ${room.roomNumber} has more occupants than beds`);
+    }
+
+    for (const attendeeId of room.occupantIds) {
+      if (attendeeId !== null) {
+        if (!attendeeIds.has(attendeeId)) {
+          invalidAppData(
+            `Room ${room.roomNumber} references an unknown attendee ID: ${attendeeId}`,
+          );
+        }
+        if (allocatedAttendeeIds.has(attendeeId)) {
+          invalidAppData(`Attendee ${attendeeId} is allocated to more than one room`);
+        }
+        allocatedAttendeeIds.add(attendeeId);
+      }
+    }
+  }
+};
+
 export const validateAppDataSemantics = (data: AppData) => {
   if (Number.isNaN(data.dates.start.getTime()) || Number.isNaN(data.dates.end.getTime())) {
     invalidAppData("The event dates must be valid dates");
@@ -98,4 +131,5 @@ export const validateAppDataSemantics = (data: AppData) => {
   data.events.forEach((event, index) => {
     validateEvent(event, index + 1, attendeeIds, locationIds, slotIds);
   });
+  validateRoomAllocations(data.roomAllocations, attendeeIds);
 };

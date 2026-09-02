@@ -8,6 +8,7 @@ import { EventGrid } from "../EventGrid/EventGrid";
 import { useUploadData } from "../UploadData/useUploadData";
 import { Schedules } from "../EventList/Schedules/Schedules";
 import { SignupSheets } from "../SignupSheets/SignupSheets";
+import { RoomMap } from "../RoomMap/RoomMap";
 
 export const Dashboard = () => {
   const context = useTooManyGamesData();
@@ -41,6 +42,7 @@ export const Dashboard = () => {
       {view === "event-list" && <EventList participantFilter={uploadData.participantFilter} />}
       {view === "event-grid" && <EventGrid participantFilter={uploadData.participantFilter} />}
       {view === "schedules" && <Schedules participantFilter={uploadData.participantFilter} />}
+      {view === "room-map" && <RoomMap />}
       {view === "signup-sheets" && (
         <SignupSheets participantFilter={uploadData.participantFilter} />
       )}
