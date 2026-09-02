@@ -10,51 +10,51 @@
     flex-direction: column;
     flex-wrap: nowrap;
 
-    li {
+    .player-list-item {
       box-sizing: border-box;
       width: 100%;
     }
   }
+}
 
-  li {
-    border: 1px solid transparent;
-    font-size: 0.8rem;
-    min-width: 6ch;
-    padding: var(--default-padding);
-    border-radius: var(--border-radius);
+.player-list-item {
+  border: 1px solid transparent;
+  border-radius: var(--border-radius);
+  font-size: 0.8rem;
+  min-width: 6ch;
+  padding: var(--default-padding);
 
-    &.count-within-min {
-      background-color: var(--color-bg-elevated);
-    }
+  &.count-within-min {
+    background-color: var(--color-bg-elevated);
+  }
 
-    &.count-within-desirable {
-      background-color: var(--color-success-subtle);
-    }
+  &.count-within-desirable {
+    background-color: var(--color-success-subtle);
+  }
 
-    &.count-within-max {
-      background-color: var(--color-warning-subtle);
-    }
+  &.count-within-max {
+    background-color: var(--color-warning-subtle);
+  }
 
-    &.count-waitlisted {
-      background-color: var(--color-error-subtle);
-    }
+  &.count-waitlisted {
+    background-color: var(--color-error-subtle);
+  }
 
-    &.facilitator {
-      border-color: var(--color-border-elevated);
-      font-weight: 700;
-    }
+  &.facilitator {
+    border-color: var(--color-border-elevated);
+    font-weight: 700;
+  }
 
-    &.non-playing-facilitator {
-      background-color: var(--color-bg-elevated);
-    }
+  &.non-playing-facilitator {
+    background-color: var(--color-bg-elevated);
+  }
 
-    &:empty::before {
-      content: "\00a0";
-    }
+  &:empty::before {
+    content: "\00a0";
+  }
 
-    &.error {
-      background-color: var(--color-error-default);
-      color: var(--color-text-inverse);
-    }
+  &.error {
+    background-color: var(--color-error-default);
+    color: var(--color-text-inverse);
   }
 }

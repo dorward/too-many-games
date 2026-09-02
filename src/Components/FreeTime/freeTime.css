@@ -1,0 +1,48 @@
+.free-time-table-container {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.free-time table {
+  border-collapse: collapse;
+  min-width: 100%;
+  width: max-content;
+
+  th,
+  td {
+    border: 1px solid var(--color-border-surface);
+    padding: var(--default-padding) 0;
+    text-align: center;
+    &:is(:first-child) {
+      padding: var(--default-padding);
+    }
+  }
+
+  thead th,
+  tbody th {
+    background: var(--color-bg-surface);
+  }
+
+  thead th:first-child,
+  tbody th {
+    left: 0;
+    position: sticky;
+    text-align: left;
+    z-index: 1;
+  }
+
+  .player-list-item {
+    display: inline-block;
+    white-space: nowrap;
+  }
+}
+
+@page free-time {
+  size: landscape;
+}
+
+@media print {
+  #root:has(.free-time) {
+    page: free-time;
+  }
+}

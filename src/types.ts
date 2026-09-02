@@ -155,6 +155,7 @@ export type View =
   | "attendees"
   | "event-list"
   | "event-grid"
+  | "free-time"
   | "room-map"
   | "schedules"
   | "signup-sheets";
@@ -162,6 +163,7 @@ const views: View[] = [
   "attendees",
   "event-list",
   "event-grid",
+  "free-time",
   "room-map",
   "schedules",
   "signup-sheets",

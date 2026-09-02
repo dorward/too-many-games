@@ -76,7 +76,7 @@ export const PlayerList = ({
     <ul className={`playerList${vertical ? " vertical" : ""}`}>
       {players.map(({ name, id }) => (
         <li
-          className={`${getCapacityClassName(capacityIndexes.get(id), playerCount)}${id === facilitatorId ? ` facilitator${facilitatorIsPlaying ? "" : " non-playing-facilitator"}` : ""}${errorPlayerIds?.has(id) ? " error" : ""}`}
+          className={`player-list-item ${getCapacityClassName(capacityIndexes.get(id), playerCount)}${id === facilitatorId ? ` facilitator${facilitatorIsPlaying ? "" : " non-playing-facilitator"}` : ""}${errorPlayerIds?.has(id) ? " error" : ""}`}
           key={id}
         >
           {name}
@@ -89,7 +89,7 @@ export const PlayerList = ({
       />
       {waitList.map(({ name, id }, waitListIndex) => (
         <li
-          className={`${getCountClassName(playerCount.max + 1 + waitListIndex, playerCount)}${errorPlayerIds?.has(id) ? " error" : ""}`}
+          className={`player-list-item ${getCountClassName(playerCount.max + 1 + waitListIndex, playerCount)}${errorPlayerIds?.has(id) ? " error" : ""}`}
           key={id}
         >
           {name}

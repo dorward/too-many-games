@@ -39,6 +39,10 @@ const games: readonly NavigationItem[] = [
     label: "Signup Sheets",
     name: "signup-sheets",
   },
+  {
+    label: "Free Time",
+    name: "free-time",
+  },
 ];
 
 const generateButtons = (

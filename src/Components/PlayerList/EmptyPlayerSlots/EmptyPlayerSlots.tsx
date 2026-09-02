@@ -13,7 +13,7 @@ export const EmptyPlayerSlots = ({ count, playerCount, startIndex }: EmptyPlayer
     return (
       <li
         aria-hidden="true"
-        className={getCountClassName(index, playerCount)}
+        className={`player-list-item ${getCountClassName(index, playerCount)}`}
         key={`empty-player-${index}`}
       />
     );
