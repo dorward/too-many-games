@@ -13,7 +13,8 @@ export const Location = ({ event, hasError = false }: LocationProps) => {
   const className = [
     "location",
     hasError && "error",
-    event.location !== undefined &&
+    event.preferredSpace.length > 0 &&
+      event.location !== undefined &&
       !event.preferredSpace.includes(event.location) &&
       "not-preferred-location",
   ]

@@ -11,7 +11,9 @@ export const EventListBody = ({ events, locationNamesById }: EventListBodyProps)
   <tbody>
     {events.map((event) => {
       const isNotPreferredLocation =
-        event.location !== undefined && !event.preferredSpace.includes(event.location);
+        event.preferredSpace.length > 0 &&
+        event.location !== undefined &&
+        !event.preferredSpace.includes(event.location);
 
       return (
         <tr key={event.id}>
