@@ -40,13 +40,3 @@ td {
   margin: 0;
   padding: 0;
 }
-
-@media print {
-  #root:has(.eventGrid) {
-    page: event-grid;
-  }
-}
-
-@page event-grid {
-  size: landscape;
-}
