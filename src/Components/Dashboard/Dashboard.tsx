@@ -10,6 +10,8 @@ import { Schedules } from "../EventList/Schedules/Schedules";
 import { SignupSheets } from "../SignupSheets/SignupSheets";
 import { RoomMap } from "../RoomMap/RoomMap";
 import { FreeTime } from "../FreeTime/FreeTime";
+import { PrintPageOrientation } from "../PrintPageOrientation/PrintPageOrientation";
+import { printPageOrientations } from "../PrintPageOrientation/printPageOrientations";
 
 export const Dashboard = () => {
   const context = useTooManyGamesData();
@@ -39,6 +41,7 @@ export const Dashboard = () => {
         setView={setView}
         view={view}
       />
+      <PrintPageOrientation orientation={printPageOrientations[view]} />
       {view === "attendees" && <Attendees />}
       {view === "event-list" && <EventList participantFilter={uploadData.participantFilter} />}
       {view === "event-grid" && <EventGrid participantFilter={uploadData.participantFilter} />}

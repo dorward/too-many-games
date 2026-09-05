@@ -36,13 +36,3 @@
     white-space: nowrap;
   }
 }
-
-@page free-time {
-  size: landscape;
-}
-
-@media print {
-  #root:has(.free-time) {
-    page: free-time;
-  }
-}

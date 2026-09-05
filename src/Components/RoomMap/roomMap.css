@@ -60,10 +60,6 @@
   }
 }
 
-@page {
-  size: portrait;
-}
-
 @media print {
   .room-map-header button,
   .room-map > [role="status"] {

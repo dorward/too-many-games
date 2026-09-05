@@ -82,7 +82,6 @@ export const EventGrid = ({ participantFilter }: EventGridProps) => {
 
   return (
     <>
-      <style media="print">{"@page { size: landscape; }"}</style>
       <EventGridTable
         maxGamesPerDay={maxGamesPerDay}
         schedule={schedule}
