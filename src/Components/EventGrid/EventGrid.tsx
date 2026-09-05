@@ -7,6 +7,8 @@ import { eventHasParticipant } from "../../util/eventHasParticipant";
 import { isScheduled } from "../../util/isScheduled";
 import { EventGridTable } from "./EventGridTable";
 import { UnscheduledEvents } from "./UnscheduledEvents";
+import { getScheduleIssues } from "./getScheduleIssues";
+import { ScheduleErrorSummary } from "./ScheduleErrorSummary";
 import "./eventGrid.css";
 
 const prepareEventsForRendering = (events: Event[]) => {
@@ -77,11 +79,16 @@ export const EventGrid = ({ participantFilter }: EventGridProps) => {
       ? events
       : events.filter((event) => eventHasParticipant(event, participantFilter));
   const schedulingErrors = useMemo(() => getSchedulingErrors(events), [events]);
+  const scheduleIssues = useMemo(
+    () => getScheduleIssues(data, schedulingErrors),
+    [data, schedulingErrors],
+  );
   const { schedule, unscheduled } = prepareEventsForRendering(filteredEvents);
   const maxGamesPerDay = getMaxGamesPerDay(schedule);
 
   return (
     <>
+      <ScheduleErrorSummary issues={scheduleIssues} />
       <EventGridTable
         maxGamesPerDay={maxGamesPerDay}
         schedule={schedule}
