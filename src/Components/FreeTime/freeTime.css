@@ -13,9 +13,6 @@
     border: 1px solid var(--color-border-surface);
     padding: var(--default-padding) 0;
     text-align: center;
-    &:is(:first-child) {
-      padding: var(--default-padding);
-    }
   }
 
   thead th,
@@ -23,9 +20,10 @@
     background: var(--color-bg-surface);
   }
 
-  thead th:first-child,
+  .free-time-attendee-heading,
   tbody th {
     left: 0;
+    padding: var(--default-padding);
     position: sticky;
     text-align: left;
     z-index: 1;
@@ -33,6 +31,8 @@
 
   .player-list-item {
     display: inline-block;
+    min-width: 0;
+    padding: 0.25rem;
     white-space: nowrap;
   }
 }
