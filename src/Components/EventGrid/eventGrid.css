@@ -40,6 +40,15 @@
   }
 }
 
+@media print {
+  .schedule-error-summary {
+    display: none;
+    &.has-errors {
+      display: block;
+    }
+  }
+}
+
 td {
   vertical-align: top;
 }

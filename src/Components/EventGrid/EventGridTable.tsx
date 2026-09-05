@@ -23,9 +23,9 @@ export const EventGridTable = ({
     <thead>
       <tr>
         <th>Day</th>
-        <th>Morning</th>
-        <th>Afternoon</th>
-        <th>Evening</th>
+        <th>Morning (10am-2pm)</th>
+        <th>Afternoon (2pm-6pm)</th>
+        <th>Evening (6pm-10pm)</th>
       </tr>
     </thead>
     <tbody>
