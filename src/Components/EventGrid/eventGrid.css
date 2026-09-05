@@ -4,6 +4,10 @@
 
   tr {
     background: transparent;
+
+    &.even .event {
+      background: var(--color-bg-elevated);
+    }
   }
 
   th:first-child {
