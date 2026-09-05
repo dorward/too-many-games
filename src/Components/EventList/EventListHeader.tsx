@@ -1,17 +1,18 @@
 import { SortableHeader } from "../SortableHeader/SortableHeader";
 import type { SortDirection } from "../SortableHeader/sortDirection";
-import { eventListColumns, type EventListSortColumn } from "./eventListTable";
+import type { EventListColumn, EventListSortColumn } from "./eventListTable";
 
 interface EventListHeaderProps {
+  columns: EventListColumn[];
   onSort: (column: EventListSortColumn) => void;
   sortBy: EventListSortColumn;
   sortDirection: SortDirection;
 }
 
-export const EventListHeader = ({ onSort, sortBy, sortDirection }: EventListHeaderProps) => (
+export const EventListHeader = ({ columns, onSort, sortBy, sortDirection }: EventListHeaderProps) => (
   <thead>
     <tr>
-      {eventListColumns.map(({ className, column, label }) => (
+      {columns.map(({ className, column, label }) => (
         <SortableHeader
           className={className}
           column={column}

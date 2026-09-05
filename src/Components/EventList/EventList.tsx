@@ -13,6 +13,7 @@ export type { EventListSortColumn } from "./eventListTable";
 
 interface EventListProps {
   participantFilter: string;
+  showCapacityColumns?: boolean;
   sortBy?: EventListSortColumn;
 }
 
@@ -54,7 +55,11 @@ const sortEvents = (
     return directionModifier * compareByName(a, b);
   });
 
-export const EventList = ({ participantFilter, sortBy = "event" }: EventListProps) => {
+export const EventList = ({
+  participantFilter,
+  showCapacityColumns = true,
+  sortBy = "event",
+}: EventListProps) => {
   const [currentSortBy, setCurrentSortBy] = useState(sortBy);
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
   const context = useTooManyGamesData();
@@ -68,6 +73,9 @@ export const EventList = ({ participantFilter, sortBy = "event" }: EventListProp
       : data.events.filter((event) => eventHasParticipant(event, participantFilter));
   const locationNamesById = new Map(data.locations.map(({ id, name }) => [id, name]));
   const sortedEvents = sortEvents(events, currentSortBy, sortDirection, locationNamesById);
+  const columns = showCapacityColumns
+    ? eventListColumns
+    : eventListColumns.filter(({ column }) => column !== "players" && column !== "maxSeats");
   const onSort = (column: EventListSortColumn) => {
     setSortDirection(getNextSortDirection(currentSortBy, column, sortDirection));
     setCurrentSortBy(column);
@@ -76,12 +84,21 @@ export const EventList = ({ participantFilter, sortBy = "event" }: EventListProp
   return (
     <table className="event-list">
       <colgroup>
-        {eventListColumns.map(({ className, column }) => (
+        {columns.map(({ className, column }) => (
           <col className={className} key={column} />
         ))}
       </colgroup>
-      <EventListHeader onSort={onSort} sortBy={currentSortBy} sortDirection={sortDirection} />
-      <EventListBody events={sortedEvents} locationNamesById={locationNamesById} />
+      <EventListHeader
+        columns={columns}
+        onSort={onSort}
+        sortBy={currentSortBy}
+        sortDirection={sortDirection}
+      />
+      <EventListBody
+        events={sortedEvents}
+        locationNamesById={locationNamesById}
+        showCapacityColumns={showCapacityColumns}
+      />
     </table>
   );
 };

@@ -5,9 +5,14 @@ import { getLocationName } from "./eventListTable";
 interface EventListBodyProps {
   events: Event[];
   locationNamesById: Map<Location["id"], Location["name"]>;
+  showCapacityColumns: boolean;
 }
 
-export const EventListBody = ({ events, locationNamesById }: EventListBodyProps) => (
+export const EventListBody = ({
+  events,
+  locationNamesById,
+  showCapacityColumns,
+}: EventListBodyProps) => (
   <tbody>
     {events.map((event) => {
       const isNotPreferredLocation =
@@ -18,8 +23,12 @@ export const EventListBody = ({ events, locationNamesById }: EventListBodyProps)
       return (
         <tr key={event.id}>
           <td className="event-list-event">{event.name}</td>
-          <td className="event-list-players">{event.players.length}</td>
-          <td className="event-list-max-seats">{event.playerCount.max}</td>
+          {showCapacityColumns && (
+            <td className="event-list-players">{event.players.length}</td>
+          )}
+          {showCapacityColumns && (
+            <td className="event-list-max-seats">{event.playerCount.max}</td>
+          )}
           <td className="event-list-scheduled">{describeSchedule(event)}</td>
           <td
             className={`event-list-location${isNotPreferredLocation ? " not-preferred-location" : ""}`}

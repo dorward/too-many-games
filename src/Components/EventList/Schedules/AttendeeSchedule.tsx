@@ -32,7 +32,7 @@ export const AttendeeSchedule = ({ attendee, events, locations }: AttendeeSchedu
           </button>
         )}
       </header>
-      <EventList participantFilter={attendee.id} sortBy="scheduled" />
+      <EventList participantFilter={attendee.id} showCapacityColumns={false} sortBy="scheduled" />
     </section>
   );
 };
