@@ -45,6 +45,45 @@
   }
 }
 
+.player-editor {
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--border-radius);
+  display: grid;
+  gap: var(--default-padding);
+  min-width: 0;
+  padding: var(--default-padding);
+}
+
+.player-editor-add {
+  align-items: end;
+  display: grid;
+  gap: var(--default-padding);
+  grid-template-columns: minmax(0, 1fr) auto;
+
+  label {
+    grid-template-columns: 8ch minmax(0, 1fr);
+  }
+}
+
+.player-editor-list {
+  display: grid;
+  gap: var(--default-padding);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    align-items: center;
+    display: flex;
+    gap: var(--default-padding);
+    justify-content: space-between;
+  }
+
+  button {
+    padding: var(--default-padding);
+  }
+}
+
 .conflictWarning {
   background: var(--color-warning-subtle);
   border: solid 1px var(--color-warning-default);
