@@ -7,6 +7,7 @@ import { PlayerList } from "../PlayerList/PlayerList";
 import { ScheduledTime } from "../ScheduledTime/ScheduledTime";
 import { Location } from "../Location/Location";
 import { EventEditor } from "./EventEditor/EventEditor";
+import { UnscheduleButton } from "./UnscheduleButton";
 import "./event.css";
 
 interface EventProps {
@@ -29,9 +30,12 @@ export const EventCard = ({ event, schedulingError }: EventProps) => {
     <div className={schedulingError?.hasError ? "event error" : "event"}>
       <header>
         <h2>{event.name}</h2>
-        <button className="editButton" onClick={openModal} aria-label={openMsg} title={openMsg}>
-          <FaRegEdit />
-        </button>
+        <div className="event-card-actions">
+          <UnscheduleButton event={event} />
+          <button onClick={openModal} aria-label={openMsg} title={openMsg} type="button">
+            <FaRegEdit />
+          </button>
+        </div>
       </header>
       <div>
         <div className="row">

@@ -20,6 +20,11 @@
   border-color: var(--color-error-default);
 }
 
+.event-card-actions {
+  display: flex;
+  gap: var(--default-padding);
+}
+
 .location.error {
   color: var(--color-error-default);
   outline: solid 1px var(--color-error-default);
@@ -93,7 +98,7 @@
 }
 
 @media print {
-  .editButton {
+  .event-card-actions {
     display: none;
   }
 }
